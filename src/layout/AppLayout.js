@@ -1,7 +1,4 @@
 import {
-  DesktopOutlined,
-  FileOutlined,
-  PieChartOutlined,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -52,13 +49,13 @@ const AppLayout = (props) => {
               margin: '16px 0',
             }}
           >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
+            <Breadcrumb.Item>Tuyển Sinh</Breadcrumb.Item>
+            <Breadcrumb.Item>Lọc Trúng Tuyển</Breadcrumb.Item>
           </Breadcrumb>
           <div
             className="site-layout-background"
             style={{
-              padding: 24,
+              padding: 0,
               minHeight: 360,
             }}
           >

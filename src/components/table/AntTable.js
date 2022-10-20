@@ -129,7 +129,7 @@ const AntTable = (props) => {
   });
   return (
     <div>
-      <Button
+      {/* <Button
         onClick={handleUpFile}
         type="primary"
         style={{
@@ -138,7 +138,7 @@ const AntTable = (props) => {
         icon={<UploadOutlined />}
       >
         Up File (.xls)
-      </Button>
+      </Button> */}
       <Table
         components={components}
         rowClassName={() => 'editable-row'}

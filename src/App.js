@@ -4,13 +4,14 @@ import Home from './views/home/Home';
 import './App.css';
 import Login from './views/login/Login';
 import AntTable from './components/table/AntTable';
+import TuyenSinh from './views/tuyen-sinh/TuyenSinh';
 
 function App() {
   return (
     <Router>
       <AppLayout>
         <Routes>
-          <Route path="/" element={<AntTable columns={[]} rows={[]} />} />
+          <Route path="/" element={<TuyenSinh/>} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Routes>
