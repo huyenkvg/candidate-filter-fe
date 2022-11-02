@@ -5,6 +5,7 @@ import './App.css';
 import Login from './views/login/Login';
 import AntTable from './components/table/AntTable';
 import TuyenSinh from './views/tuyen-sinh/TuyenSinh';
+import KhoaTuyenSinh from './views/quan-ly-tuyen-sinh/KhoaTuyenSinh';
 
 function App() {
   return (
@@ -12,6 +13,8 @@ function App() {
       <AppLayout>
         <Routes>
           <Route path="/" element={<TuyenSinh/>} />
+          <Route path="/loc-trung-tuyen" element={<TuyenSinh/>} />
+          <Route path="/khoa-tuyen-sinh" element={<KhoaTuyenSinh/>} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
         </Routes>

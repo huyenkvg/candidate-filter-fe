@@ -36,8 +36,8 @@ export default function UploadButton({ onUpload }) {
     let formData = new FormData();
     formData.append('file', e.target.files[0]);
 
-    onUpload( formData);
     setFile(null)
+    onUpload(formData);
     // console.log("formdata", formData.get('file'));
   };
   

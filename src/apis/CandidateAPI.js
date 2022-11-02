@@ -14,4 +14,18 @@ export default class CandidateAPI {
       data: data
   })
   }
+
+  static filterCandidates = (data) => {
+    return axios({
+      method: "POST",
+      url: `http://localhost:3000/wish-list/filter`,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Accept': 'application/json'
+      },
+      data: data
+    })
+  }
+
+
 }
