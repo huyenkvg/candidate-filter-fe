@@ -7,6 +7,7 @@ import AntTable from "../../components/table/AntTable";
 import { setChiTieuNganh, setDanhSachCandidate } from "../../features/ThiSinh/candidateSlice";
 import { DownloadOutlined, EyeOutlined, FilterOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Option } from "antd/lib/mentions";
+import { setDanhSachTrungTuyen } from "../../features/DSST/dsttSlice";
 
 function showMessage(type, content) {
   switch (type) {
@@ -34,6 +35,7 @@ function CayDieuKienUuTien(props) {
   const [loading, setLoading] = useState(false);
   const [checkedList, setCheckedList] = useState([]);
   const [motaDieuKien, setMotaDieuKien] = useState({});
+  const [yourQuery, setYourQuery] = useState("");
   const onCheck = (checkedKeys, info) => {
     // console.log('onCheck', info);
     setCheckedList(checkedKeys.map(selected => {
@@ -41,7 +43,7 @@ function CayDieuKienUuTien(props) {
     }));
     setMotaDieuKien(prev => {
       return info.checkedNodes.reduce((obj, node) => {
-        obj[node.dataKey] = prev[node.dataKey] || "asc";
+        obj[node.dataKey] = prev[node.dataKey] || "DESC";
         return obj;
       }, {})
     });
@@ -71,7 +73,22 @@ function CayDieuKienUuTien(props) {
   useEffect(() => {
     // console.log('checkedList.map(x=> x.dataKey) :>> ', checkedList.map(x => x.dataKey));
     onCayDieuKienChange(checkedList.map(x => x.dataKey), motaDieuKien);
+    if (checkedList.length > 0) {
+      let query = "Hệ thống sẽ ưu tiên chọn Hồ Sơ có ";
+      checkedList.forEach((item, index) => {
+        query += `${item.title} ${motaDieuKien[item.dataKey] === 'ASC' ? 'nhỏ hơn' : 'lớn hơn'}`
+        if (index < checkedList.length - 1) {
+          if (index + 1 === checkedList.length - 1) {
+            query += `, nếu thí sinh có ${item.title} bằng nhau, thì sẽ ưu tiên chọn hồ sơ có `;
+          }
+          else query += ', ';
+        }
+      })
 
+      setYourQuery(query);
+    }
+    else
+      setYourQuery('');
   }, [checkedList, motaDieuKien]);
   useEffect(() => {
     if (data) {
@@ -88,6 +105,11 @@ function CayDieuKienUuTien(props) {
   return (
     <Col span={24} style={{}}>
       <h3>Chọn điều kiện xét tuyển ưu tiên <span style={{ color: 'red' }}> - Mức độ ưu tiên từ trên xuống</span></h3>
+      <Row>
+        <h4 style={{ fontSize: '16px', color: '#185adb' }}>
+          {yourQuery}
+        </h4>
+      </Row>
       <Row>
         <Col span={12} style={{ overflowY: 'auto', maxHeight: '70vh' }}>
           <Tree
@@ -111,13 +133,13 @@ function CayDieuKienUuTien(props) {
                 <Space > <Select
                   size="small"
                   onChange={(e) => handleDropdownChange(e, item)}
-                  defaultValue="ASC"
+                  defaultValue="DESC"
                   style={{
                     width: 120,
                   }}
                 >
-                  <Option value="ASC">ASC</Option>
-                  <Option value="DESC">DESC</Option>
+                  <Option value="ASC">(ASC) TĂNG</Option>
+                  <Option value="DESC">(DESC) GIẢM</Option>
                 </Select>
                   <Button type='default' shape="circle" size="small" onClick={(e) => { onCancelSelect(item) }} icon={<DeleteOutlined />} />
                 </Space>
@@ -136,7 +158,7 @@ function ListChiTieuCacNganh(props) {
   const [keys, setKeys] = useState([]);
   const [values, setValues] = useState([]);
   const onInputChange = (e, key) => {
-    onChiTieuChange({ ...chiTieuNganh, [key]: e.target.value });
+    onChiTieuChange(key, e.target.value);
   }
   useEffect(() => {
     if (data) {
@@ -146,6 +168,7 @@ function ListChiTieuCacNganh(props) {
   }, [data]);
   return (
     <div>
+      <h3>Nhập Chỉ Tiêu Tuyển Sinh</h3>
       <p>Tổng cộng {keys.length} ngành và {values.flat().length} thí sinh</p>
       <List
         style={{ paddingRight: '20px' }}
@@ -212,6 +235,7 @@ export default function TuyenSinh() {
   const [dataSubmit, setDataSubmit] = useState(null);
   const dispatch = useDispatch();
   const candidates = useSelector((state) => state.candidates);
+  const danhSachTrungTuyen = useSelector((state) => state.dsttSlice);
   const { groupByMaNganh, groupBySoBaoDanh } = candidates;
 
 
@@ -233,10 +257,12 @@ export default function TuyenSinh() {
       setDataSubmit(null);
     }
   }
-  const handleChiTieuChange = (chiTieuNganh) => {
-    // dispatch(setChiTieuNganh(chiTieuNganh));
-    if (chiTieuNganh && groupByMaNganh && groupBySoBaoDanh) {
+  const handleChiTieuChange = (key, newValue) => {
+    let chiTieuNganh = dataSubmit ? { ...dataSubmit.chiTieuNganh, [key]: newValue } : { [key]: newValue };
+    if (newValue && groupByMaNganh && groupBySoBaoDanh) {
       setDataSubmit({ ...dataSubmit, chiTieuNganh });
+    // dispatch(setChiTieuNganh(chiTieuNganh));
+    // console.log('on chi tieu nagnh change input :>> ', dataSubmit);
     }
     else {
       setDataSubmit(null);
@@ -253,7 +279,18 @@ export default function TuyenSinh() {
       setLoading(true);
       CandidateAPI.filterCandidates(formData).then(res => {
         const { data } = res;
-      }).finally(() => {
+        if (data.dstt) {
+          dispatch(setDanhSachTrungTuyen(data.dstt));
+          console.log('danhSachTrungTuyen.dstt :>> ', danhSachTrungTuyen.rows);
+          showMessage('success', 'Lọc Danh Sách Trúng Tuyển thành công');
+        }
+      }).catch(
+        err => {
+          showMessage('error', 'Lọc Danh Sách Trúng Tuyển thất bại');
+        }
+
+      ).finally(() => {
+
         setLoading(false);
       })
     }
@@ -298,7 +335,7 @@ export default function TuyenSinh() {
       <Modal title="Yêu cầu file xls" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>File Excel cần có Sheet tên "Mini" chứa dữ liệu cần trích xuất.</p>
         <p>Các Header của cột phải nằm ở hàng trên cùng.</p>
-        <p>Các cột Số Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng là bắt buộc</p>
+        <p>Các cột Số <span style={{ color: 'orange' }}>Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng</span> là bắt buộc</p>
         <p>Có Thể <Button type='link' icon={< DownloadOutlined />}>Tải Template</Button> để điền thông tin sau đó nộp</p>
       </Modal>
       <Spin spinning={loading} >

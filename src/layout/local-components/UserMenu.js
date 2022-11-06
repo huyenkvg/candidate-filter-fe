@@ -1,21 +1,25 @@
 import { Dropdown, Menu } from "antd";
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom"; import {
+import { Navigate, useLocation, useNavigate } from "react-router-dom"; import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/User/userSlice";
 
 export default function UserMenu() {
   const [visible, setVisible] = useState(false);
   const [user, setUser] = useState({username: 'huyennguyen@ptithcm.com.vn'});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   // const history = unstable_HistoryRouter();
   useEffect(() => {
     // const user = JSON.parse(localStorage.getItem('user'));
     // setUser(user);
   }, []);
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
+    dispatch(logout())
     navigate('/login');
   };
   const menu = (

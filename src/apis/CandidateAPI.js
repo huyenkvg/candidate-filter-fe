@@ -20,6 +20,7 @@ export default class CandidateAPI {
       method: "POST",
       url: `http://localhost:3000/wish-list/filter`,
       headers: {
+        Authorization: "Bearer " + localStorage.getItem('token'),
         'Content-Type': 'multipart/form-data',
         'Accept': 'application/json'
       },

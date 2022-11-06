@@ -3,8 +3,10 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { Breadcrumb, Layout, Menu } from 'antd';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { logout, setUserLoginn } from '../features/User/userSlice';
 import UserMenu from './local-components/UserMenu';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
@@ -27,8 +29,10 @@ const items = [
 
 const AppLayout = (props) => {
   const [collapsed, setCollapsed] = useState(false);
+  const user = useSelector(state => state.userSlice);
   const navigate = useNavigate()
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const handleClick = (e, type) => {
     console.log('click', e);
@@ -37,25 +41,41 @@ const AppLayout = (props) => {
       navigate(`/${e.key}`);
     }
   }
+  useEffect(() => {
+    if(location.pathname === '/login') {
+      navigate('/khoa-tuyen-sinh');
+    }
+  }, [user.isLoggedIn])
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+    if (isLoggedIn) {
+      dispatch(setUserLoginn({ isLoggedIn: true }));
+      // navigate('/tuyen-sinh');
+    }
+    else {
+      console.log('cvbnm :>> ');
+      dispatch(logout());
+      navigate('/login');      
+    }
+  },[location.pathname])
+
   return (
-    <Layout
-      style={{
-        minHeight: '100vh',
-      }}
-    >
+
+    user.isLoggedIn ?
+      <Layout style={{ minHeight: '100vh' }} >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo" />
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={e => handleClick(e, 'CLICK-MENU')} />
       </Sider>
       <Layout className="site-layout">
         <Header
-          
+
           className="site-layout-background"
           style={{
             padding: 0,
           }}
         >
-          <UserMenu/>
+            <UserMenu />
         </Header>
         <Content
           style={{
@@ -66,8 +86,8 @@ const AppLayout = (props) => {
             style={{
               margin: '16px 0',
               fontSize: '16px',
-              textDecoration:'underline',
-              textTransform:'uppercase'
+                textDecoration: 'underline',
+                textTransform: 'uppercase'
             }}
           >
             {
@@ -77,12 +97,12 @@ const AppLayout = (props) => {
                     return (
                       <>
                         <Breadcrumb.Item key={item.key}>{item.label}</Breadcrumb.Item>
-                        <Breadcrumb.Item onClick={e => handleClick({key: child.key}, 'CLICK-MENU')} key={child.key}>{child.label}</Breadcrumb.Item>
+                        <Breadcrumb.Item onClick={e => handleClick({ key: child.key }, 'CLICK-MENU')} key={child.key}>{child.label}</Breadcrumb.Item>
                       </>
                     )
                   }
-                }) : 
-                location.pathname.includes(item.key) && <Breadcrumb.Item key={item.key}>{item.label}</Breadcrumb.Item>
+                }) :
+                  location.pathname.includes(item.key) && <Breadcrumb.Item key={item.key}>{item.label}</Breadcrumb.Item>
               })
 
 
@@ -108,6 +128,10 @@ const AppLayout = (props) => {
         </Footer>
       </Layout>
     </Layout>
+      :
+      <>
+        {props.children}</>
+
   );
 };
 export default AppLayout;
