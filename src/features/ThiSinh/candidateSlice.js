@@ -10,6 +10,7 @@ const candidateSlice = createSlice({
     chiTieuNganh: null,
     groupByMaNganh: {},
     groupBySoBaoDanh: {},
+    dataXetTuyen: {},
   },
   reducers: {
     setDanhSachCandidate(state, action) {
@@ -24,16 +25,30 @@ const candidateSlice = createSlice({
     setChiTieuNganh(state, action) {
       state.chiTieuNganh = action.payload;
     },
+    setDataXetTuyen(state, action) {
+      state.dataXetTuyen = action.payload;
+    },
     addCandidate(state, action) {
       state.rows.push(action.payload);
     },
     removeCandidate(state, action) {
       state.rows.splice(action.payload);
     },
+    reset(state) {
+      state = {
+        rows: [],
+        columns: [],
+        headerObject: {},
+        chiTieuNganh: null,
+        groupByMaNganh: {},
+        groupBySoBaoDanh: {},
+        dataXetTuyen: {},
+      };
+    }
   }
 })
 
 const { reducer, actions } = candidateSlice;
-export const { addCandidate, setChiTieuNganh, removeCandidate, setDanhSachCandidate, } = actions;
+export const { addCandidate, setChiTieuNganh, removeCandidate, setDanhSachCandidate, reset , setDataXetTuyen} = actions;
 export default reducer;
 

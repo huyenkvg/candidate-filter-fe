@@ -47,13 +47,15 @@ export default function UploadButton({ onUpload }) {
     // onClick={() => fileInput.current.click()}
     >
       {/* <UploadOutlined/>  */}
+      {/* <input type='file' id="getFile" style="display:none"> */}
+      <Button type='text'>
       <input
              ref={fileInput}
               type="file"
               value={file_x}
               // style={{ display: 'none' }}
               onChange={handleUploadFile}
-            />
+            /></Button>
     </div>
   )
 };

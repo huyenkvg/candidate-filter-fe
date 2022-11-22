@@ -5,11 +5,16 @@ import './App.css';
 import Login from './views/login/Login';
 import AntTable from './components/table/AntTable';
 import TuyenSinh from './views/tuyen-sinh/TuyenSinh';
-import KhoaTuyenSinh from './views/quan-ly-tuyen-sinh/KhoaTuyenSinh';
 import LoginForm from './views/login/LoginForm';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { logout, setUserLoginn } from './features/User/userSlice';
+import KhoaTuyenSinh from './views/quan-ly-tuyen-sinh/khoa-tuyen-sinh/KhoaTuyenSinh';
+import DotTuyenSinh from './views/quan-ly-tuyen-sinh/dot-tuyen-sinh/DotTuyenSinh';
+import Nganh from './views/quan-ly-tuyen-sinh/nganh/Nganh';
+import ToHopXetTuyen from './views/quan-ly-tuyen-sinh/to-hop/ToHopXetTuyen';
+import NguoiDung from './views/users/NguoiDung';
+import HoSoTuyenSinh from './views/quan-ly-tuyen-sinh/HoSoTuyenSinh';
 
 function App() {
   const user = useSelector(state => state.userSlice);
@@ -19,6 +24,11 @@ function App() {
         { path: '/', element:  <TuyenSinh /> },
         { path: '/loc-trung-tuyen', element: <TuyenSinh /> },
         { path: '/khoa-tuyen-sinh', element: <KhoaTuyenSinh /> },
+        { path: '/nguoi-dung', element: <NguoiDung /> },
+        { path: '/nganh', element: <Nganh /> },
+        { path: '/to-hop', element: <ToHopXetTuyen/> },
+        { path: '/dot-tuyen-sinh/:maDotTuyenSinh', element: <DotTuyenSinh /> },
+        { path: '/ho-so-tuyen-sinh', element: <HoSoTuyenSinh/> },
         { path: '/home', element: <Home /> },
   ]
   const publicRoutes = [
@@ -50,7 +60,6 @@ function App() {
               <Route key={index} path={route.path} element={route.element} />
             ))
           }
-
         </Routes>
 
       </AppLayout>

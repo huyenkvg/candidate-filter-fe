@@ -1,6 +1,7 @@
 import { DownOutlined } from '@ant-design/icons';
 import { Badge, Dropdown, Menu, Space, Table } from 'antd';
 import React from 'react';
+import './Table.css'
 const menu = (
   <Menu
     items={[
@@ -25,11 +26,11 @@ export default function Complextable(props) {
 
     const child_rows = data.find((item) => item.maKhoa === parent).danh_sach_dot_tuyen.map((x, index) => ({...x, index: index+1,}));
 
-    return <Table showHeader={false} columns={child_columns} dataSource={child_rows} pagination={false} />;
+    return <Table  showHeader={false} columns={child_columns} dataSource={child_rows} pagination={false} />;
   };
   return (
     <>
-      <Table
+      <Table 
         columns={columns}
         expandable={{
           expandedRowRender,

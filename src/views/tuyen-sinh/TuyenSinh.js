@@ -4,10 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import CandidateAPI from "../../apis/CandidateAPI";
 import UploadButton from "../../components/input/UpLoadButton";
 import AntTable from "../../components/table/AntTable";
-import { setChiTieuNganh, setDanhSachCandidate } from "../../features/ThiSinh/candidateSlice";
+import { reset, setChiTieuNganh, setDanhSachCandidate, setDataXetTuyen } from "../../features/ThiSinh/candidateSlice";
 import { DownloadOutlined, EyeOutlined, FilterOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Option } from "antd/lib/mentions";
 import { setDanhSachTrungTuyen } from "../../features/DSST/dsttSlice";
+import ModalTableDSTT from "./ModalTableDSTT";
 
 function showMessage(type, content) {
   switch (type) {
@@ -230,9 +231,9 @@ export default function TuyenSinh() {
   // Khai báo
   const [loading, setLoading] = useState(false);
   const [fileInput, setFileInput] = useState(null);
-
+  const [modalResultControl, setModalResultControl] = useState({open: false, title: "KẾT QUẢ LỌC" ,loading: false, data: null});
   const [groupCandidates, setGroupCandidates] = useState(null);
-  const [dataSubmit, setDataSubmit] = useState(null);
+  const [dataSubmit, setDataSubmit] = useState({});
   const dispatch = useDispatch();
   const candidates = useSelector((state) => state.candidates);
   const danhSachTrungTuyen = useSelector((state) => state.dsttSlice);
@@ -281,8 +282,10 @@ export default function TuyenSinh() {
         const { data } = res;
         if (data.dstt) {
           dispatch(setDanhSachTrungTuyen(data.dstt));
-          console.log('danhSachTrungTuyen.dstt :>> ', danhSachTrungTuyen.rows);
+          console.log('danhSachTrungTuyen.dstt :>> ', danhSachTrungTuyen.data);
+          setModalResultControl({open: true, title: "KẾT QUẢ LỌC", loading: false, data: res.data.dstt});
           showMessage('success', 'Lọc Danh Sách Trúng Tuyển thành công');
+
         }
       }).catch(
         err => {
@@ -300,6 +303,7 @@ export default function TuyenSinh() {
 
   const upFileHandler = (data) => {
     setLoading(true);
+    dispatch(setDataXetTuyen([]))
     CandidateAPI.getCandidatesFromXls(data).then((res) => {
       if (res.data.error) {
         showMessage('error', res.data.error);
@@ -328,6 +332,9 @@ export default function TuyenSinh() {
       setLoading(false);
     })
   }
+  useEffect(() => {
+    dispatch(reset())
+  },[])
 
   return (
     <div style={{ overflowX: 'scroll' }}>
@@ -335,7 +342,7 @@ export default function TuyenSinh() {
       <Modal title="Yêu cầu file xls" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>File Excel cần có Sheet tên "Mini" chứa dữ liệu cần trích xuất.</p>
         <p>Các Header của cột phải nằm ở hàng trên cùng.</p>
-        <p>Các cột Số <span style={{ color: 'orange' }}>Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng</span> là bắt buộc</p>
+        <p>Các cột <span style={{ color: 'orange' }}>Số Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng</span> là bắt buộc</p>
         <p>Có Thể <Button type='link' icon={< DownloadOutlined />}>Tải Template</Button> để điền thông tin sau đó nộp</p>
       </Modal>
       <Spin spinning={loading} >
@@ -344,6 +351,7 @@ export default function TuyenSinh() {
         </Space>
 
         <Divider />
+         <div style={{ display: (fileInput ? "block" : "none")}}>
         <Row >
           <Col span={8}>
             {candidates.groupByMaNganh && <ListChiTieuCacNganh onChiTieuChange={handleChiTieuChange} data={candidates.groupByMaNganh} chiTieuNganh={candidates.chiTieuNganh} />}
@@ -365,11 +373,13 @@ export default function TuyenSinh() {
         </Row>
         <Row>
           <Col span={24}>
-            {!loading && <AntTable columns={candidates.columns} rows={candidates.rows} loading={loading} />}
-
+            {!loading && <AntTable columns={candidates.columns.map((item) => ({...item, width: 'auto'}))} rows={candidates.rows} loading={loading} />}
+             
           </Col>
-        </Row>
+          </Row>
+        </div>
       </Spin>
+      {modalResultControl.data && <ModalTableDSTT {...modalResultControl} onCancel={()=>{setModalResultControl(prev=>({...prev, open:false}))}}/>}
     </div>
   );
 }

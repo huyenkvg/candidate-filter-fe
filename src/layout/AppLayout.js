@@ -2,12 +2,14 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Layout, Menu } from 'antd';
+import { Breadcrumb, Card, Image, Layout, Menu } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { logout, setUserLoginn } from '../features/User/userSlice';
 import UserMenu from './local-components/UserMenu';
+import img from '../assets/images/Logo_PTIT_University.png';
+
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -19,13 +21,20 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem('Người Dùng', 'nguoi-dung', <TeamOutlined />),
+  getItem('Thống Kê', 'thong-ke', <TeamOutlined />),
   getItem('Lọc Trúng Tuyển', 'loc-trung-tuyen', <UserOutlined />),
   ,
   getItem('Tuyển Sinh', 'tuyen-sinh', <UserOutlined />, [
     getItem('Khoá Tuyển Sinh', 'khoa-tuyen-sinh', <UserOutlined />),
+    getItem('Hồ Sơ Tuyển Sinh', 'ho-so-tuyen-sinh', <UserOutlined />),
+    getItem('Ngành', 'nganh', <UserOutlined />),
+    getItem('Tổ Hợp', 'to-hop', <UserOutlined />),
     // getItem('Khoá Tuyển Sinh', 'nganh', <UserOutlined />),
   ]),
 ];
+const hide_path = [
+ {str: 'dot-tuyen-sinh', title: 'Khoá Tuyển sinh', child: ' Đợt Tuyển sinh'},
+]
 
 const AppLayout = (props) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -64,7 +73,14 @@ const AppLayout = (props) => {
     user.isLoggedIn ?
       <Layout style={{ minHeight: '100vh' }} >
       <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
-        <div className="logo" />
+          <div style={{textAlign:'center', marginTop: 20, }}>
+            <h2  style={{color:'#fff'}}>PTIT HCM</h2>
+            <Image
+              width={90}
+              src={require("../assets/images/Logo_PTIT_University.png")}
+            />
+
+          </div>
         <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={e => handleClick(e, 'CLICK-MENU')} />
       </Sider>
       <Layout className="site-layout">
@@ -93,7 +109,7 @@ const AppLayout = (props) => {
             {
               items.map((item) => {
                 return item.children ? item.children.map((child) => {
-                  if (location.pathname.includes(child.key)) {
+                  if (location.pathname.includes(child.key) ) {
                     return (
                       <>
                         <Breadcrumb.Item key={item.key}>{item.label}</Breadcrumb.Item>
@@ -104,10 +120,18 @@ const AppLayout = (props) => {
                 }) :
                   location.pathname.includes(item.key) && <Breadcrumb.Item key={item.key}>{item.label}</Breadcrumb.Item>
               })
-
-
-
             }
+            {
+              hide_path.map((path) => {
+                if (location.pathname.includes(path.str)) {
+                  return <>
+                  <Breadcrumb.Item key={path.str}>{path.title}</Breadcrumb.Item>
+                  <Breadcrumb.Item key={path.child}>{path.child}</Breadcrumb.Item>
+                </>
+                }
+              })
+            }
+
           </Breadcrumb>
           <div
             className="site-layout-background"

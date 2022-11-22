@@ -80,19 +80,14 @@ const EditableCell = ({
   return <td {...restProps}>{childNode}</td>;
 };
 const AntTable = (props) => {
+  console.log('props :>> ', props);
   const [dataSource, setDataSource] = useState(props.rows);
   const [count, setCount] = useState(2);
   const handleDelete = (key) => {
     const newData = dataSource.filter((item) => item.key !== key);
     setDataSource(newData);
   };
-  const defaultColumns = props.columns ||
-    [{
-      title: 'name',
-      dataIndex: 'name',
-      width: '30%',
-      editable: true,
-    },];
+  const defaultColumns = props.columns;
   const handleUpFile = () => {
     alert('handleUpFile');
   };
@@ -128,7 +123,7 @@ const AntTable = (props) => {
     };
   });
   return (
-    <div>
+    <div >
       {/* <Button
         onClick={handleUpFile}
         type="primary"
@@ -140,11 +135,16 @@ const AntTable = (props) => {
         Up File (.xls)
       </Button> */}
       <Table
+      sticky
+      
+      scroll={{ x: 'max-content', y:450 }}
+
         components={components}
         rowClassName={() => 'editable-row'}
         bordered
         dataSource={dataSource}
         columns={columns}
+        {...props.sx}
       />
     </div>
   );

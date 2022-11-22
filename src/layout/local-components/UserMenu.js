@@ -1,4 +1,4 @@
-import { Dropdown, Menu } from "antd";
+import { Avatar, Col, Dropdown, Menu, Row, Space } from "antd";
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom"; import {
   TeamOutlined,
@@ -9,7 +9,7 @@ import { logout } from "../../features/User/userSlice";
 
 export default function UserMenu() {
   const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState({username: 'huyennguyen@ptithcm.com.vn'});
+  const [user, setUser] = useState({ username: localStorage.getItem("email") });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // const history = unstable_HistoryRouter();
@@ -39,9 +39,24 @@ export default function UserMenu() {
         <a
           className="ant-dropdown-link"
           onClick={(e) => e.preventDefault()}
-          style={{ color: 'white' }}
+          style={{ color: 'white',display:'flex', alignItems:'center' }}
         >
-          {user.username} <UserOutlined  style={{fontSize:'22px',}}/>
+
+          <Space>
+            <Col>{user.username} </Col>
+            <Col><Avatar
+            style={{
+              backgroundColor: '#f56a00'
+            }}
+            icon={<UserOutlined />}
+          /></Col>
+            
+            
+          </Space>
+
+
+
+         
         </a>
       </Dropdown>
     </div>

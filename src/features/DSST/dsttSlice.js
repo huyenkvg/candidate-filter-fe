@@ -4,11 +4,11 @@ import { createSlice } from '@reduxjs/toolkit'
 const dsttSlice = createSlice({
   name: 'ds_trung_tuyen',
   initialState: {
-    rows: {},
+    data: {},
   },
   reducers: {
     setDanhSachTrungTuyen(state, action) {
-      state.rows = action.payload;
+      state.data = action.payload;
     },
   }
 })

@@ -1,38 +1,45 @@
 import { Button, Form, Input, Select } from 'antd';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 const { Option } = Select;
 const layout = {
   labelCol: {
-    span: 4,
+    span: 6,
   },
   wrapperCol: {
     span: 18,
   },
 };
 
-export function FormTaoKhoa({schema, onSubmit, onCancel, onOk}) {
+export function FormTaoKhoa({schema, onSubmit, prevValues, onCancel, onOk}) {
+  const [formValues, setFormValues] = React.useState(prevValues || {});
   const formRef = useRef();
   const onFinish = (values) => {
-    onSubmit(values);
+    // console.log('HIHIHIHIHIHH Values :>> ', values);
+    let dataSubmit = {...prevValues, ...values};
+    onSubmit(dataSubmit);
     // onOk();
     formRef.current.resetFields();
   };
   const onReset = () => {
     formRef.current.resetFields();
   };
-  const onFill = () => {
-    formRef.current.setFieldsValue({
-      tenKhoa: `Khoá Tuyển sinh ${(new Date()).getFullYear()}`,
-    });
-  };
-
+  // const onFill = () => {
+  //   formRef.current.setFieldsValue({
+  //     tenKhoa: `Khoá Tuyển sinh ${(new Date()).getFullYear()}`,
+  //   });
+  // };
+  useEffect(() => {
+    console.log('prevValues :>> ', prevValues);
+    setFormValues(prevValues || {});
+    formRef?.current?.setFieldsValue({...prevValues})
+  }, [prevValues]);
   return (
     <Form {...layout} ref={formRef} name="control-ref" onFinish={onFinish}>
       {
         schema.map((item, index) => {
           return (
-            <Form.Item key={index} name={item.dataIndex} label={item.title} rules={[{ required: true }]}>
-              <Input />
+            <Form.Item key={index} name={item.dataIndex} label={item.title}  rules={[{ required: true }]}>
+              <Input   type={item.type || 'text'} />
             </Form.Item>
           )
 
@@ -60,14 +67,14 @@ export function FormTaoKhoa({schema, onSubmit, onCancel, onOk}) {
       {/* </Form.Item> */}
       <Form.Item style={{alignItems: 'right'}}>
         <Button type="primary" htmlType="submit">
-          Tạo
+          OK
         </Button>
         {/* <Button htmlType="button" onClick={onReset}>
             Reset
           </Button> */}
-        <Button type="link" htmlType="button" onClick={onFill}>
+        {/* <Button type="link" htmlType="button" onClick={onFill}>
           Fill form
-        </Button>
+        </Button> */}
       </Form.Item>
     </Form>
   );
