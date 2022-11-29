@@ -11,6 +11,7 @@ import { reset, setDanhSachCandidate, setDataXetTuyen } from "../../../features/
 import { DownloadOutlined, EyeOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import ChiTieuArrayFields from "../local-components/ChiTieuArrayFields";
 import ModalDSXT from "../local-components/ModalDSXT";
+import UploadChiTieuTuyenSinh from "./UploadChiTieuTuyenSinh";
 
 function showMessage(type, content) {
   switch (type) {
@@ -264,6 +265,11 @@ export default function DotTuyenSinh() {
 
   }
   const onClickDownDSTT = () => {
+    showMessage('success', 'Xử  tải xuống ở đây');
+  }
+  const onOkUploadChiTieu = () => {
+    fetch();
+    showMessage('success', 'Upload chỉ tiêu thành công');
   }
   return (
     <div style={{ overflowX: 'scroll' }}>
@@ -278,8 +284,8 @@ export default function DotTuyenSinh() {
                 <p>Tổng trúng tuyển: {dataDotTuyenSinh._count.danh_sach_nguyen_vong}></p> */}
                 <p>Tổng ngành tuyển: {dataDotTuyenSinh._count.chi_tieu_tuyen_sinh}</p>
                 {dataDotTuyenSinh._count.chi_tieu_tuyen_sinh > 0
-                  && <RenderChiTieu chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
-
+                  ? <RenderChiTieu chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
+                  : <UploadChiTieuTuyenSinh onOk={onOkUploadChiTieu} maDotTuyenSinh={maDotTuyenSinh} />
                 }
                 <Row>
                   <ChiTieuArrayFields submitChiTieu={handleSubmitChiTieu} existNganh={dataDotTuyenSinh.chi_tieu_tuyen_sinh.map(x => (x.maNganh))} />

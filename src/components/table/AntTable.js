@@ -137,7 +137,7 @@ const AntTable = (props) => {
       <Table
       sticky
       
-      scroll={{ x: 'max-content', y:450 }}
+        scroll={{ x: 'max-content', y: 450, ...props.scroll }}
 
         components={components}
         rowClassName={() => 'editable-row'}
