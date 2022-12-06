@@ -13,6 +13,8 @@ import ChiTieuArrayFields from "../local-components/ChiTieuArrayFields";
 import ModalDSXT from "../local-components/ModalDSXT";
 import UploadChiTieuTuyenSinh from "./UploadChiTieuTuyenSinh";
 
+import { Excel } from "antd-table-saveas-excel";
+
 function showMessage(type, content) {
   switch (type) {
     case 'success':
@@ -30,6 +32,17 @@ function showMessage(type, content) {
     default:
       break;
   }
+}
+function flattenObj(obj, parent, res = {}) {
+  for (let key in obj) {
+    let propName = parent ? parent + '.' + key : key;
+    if (typeof obj[key] == 'object') {
+      flattenObj(obj[key], propName, res);
+    } else {
+      res[propName] = obj[key];
+    }
+  }
+  return res;
 }
 const ds_xettuyen_columns = [
   {
@@ -50,10 +63,51 @@ const ds_xettuyen_columns = [
     key: 'nguyenVong',
   },
   {
-    title: 'maNganh',
+    title: 'Mã Ngành',
     dataIndex: 'maNganh',
     key: 'maNganh',
     width: 100,
+  },
+
+  {
+    title: 'Họ Tên',
+    dataIndex: 'hoTen',
+    key: 'hoTen',
+  },
+  {
+    title: 'cmnd',
+    dataIndex: 'cmnd',
+    key: 'cmnd',
+  },
+  {
+    title: 'Địa Chỉ Nhận Giấy Báo',
+    dataIndex: 'diaChiNhanGiayBao',
+    key: 'diaChiNhanGiayBao',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Giới Tính',
+    dataIndex: 'gioiTinh',
+    key: 'goiTinh',
+  },
+  {
+    title: 'Mã Tỉnh',
+    dataIndex: 'maTinh',
+    key: 'maTinh',
+  },
+  {
+    title: 'Mã Trường',
+    dataIndex: 'maTruong',
+    key: 'maTinh',
+  },
+  {
+    title: 'Khu Vực Ưu Tiên',
+    dataIndex: 'khuVucUuTien',
+    key: 'khuVucUuTien',
   },
   {
     title: 'maToHopXetTuyen',
@@ -70,41 +124,68 @@ const ds_xettuyen_columns = [
 ]
 const ds_tt_columns = [
   {
-    title: 'soBaoDanh',
+    title: 'Số Báo Danh',
     dataIndex: 'soBaoDanh',
     key: 'soBaoDanh',
     width: 100,
 
-  },
-  // {
-  //   title: 'danh_sanh_nguyen_vong',
-  //   dataIndex: 'danh_sanh_nguyen_vong',
-  //   key: 'danh_sanh_nguyen_vong',
-  //   render: (record) => {
-  //     return <>
-  //       <p>record.maNganh</p>
-  //     </>
-  //   }
-
-  // },
+  },  
   {
-    title: 'nguyenVongTrungTuyen',
+    title: 'Mã Ngành',
+    dataIndex: 'maNganh',
+    key: 'maNganh',
+    width: 200,
+  },
+  {
+    title: 'Mã Tổ Hợp Xét Tuyển',
+    dataIndex: 'maToHopXetTuyen',
+    key: 'maToHopXetTuyen',
+    width: 200,
+  },
+  {
+    title: 'Nguyện Vọng Trúng Tuyển',
     dataIndex: 'nguyenVongTrungTuyen',
     key: 'nguyenVong',
   },
   {
-    title: 'Thông Tin Thí Sinh',
-    dataIndex: 'thong_tin_ca_nhan',
-    key: 'thong_tin_ca_nhan',
-    render: (thong_tin_ca_nhan) => (
-      <div>
-        <p>{thong_tin_ca_nhan.hoTen}</p>
-        <p>{thong_tin_ca_nhan.cmnd}</p>
-        <p>{thong_tin_ca_nhan.diaChiNhanGiayBao}</p>
-      </div>
-    )
-
-
+    title: 'Họ Tên',
+    dataIndex: 'hoTen',
+    key: 'hoTen',
+  },
+  {
+    title: 'cmnd',
+    dataIndex: 'cmnd',
+    key: 'cmnd',
+  },
+  {
+    title: 'Địa Chỉ Nhận Giấy Báo',
+    dataIndex: 'diaChiNhanGiayBao',
+    key: 'diaChiNhanGiayBao',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Giới Tính',
+    dataIndex: 'gioiTinh',
+    key: 'goiTinh',
+  },
+  {
+    title: 'Mã Tỉnh',
+    dataIndex: 'maTinh',
+    key: 'maTinh',
+  },
+  {
+    title: 'Mã Trường',
+    dataIndex: 'maTruong',
+    key: 'maTinh',
+  },
+  {
+    title: 'Khu Vực Ưu Tiên',
+    dataIndex: 'khuVucUuTien',
+    key: 'khuVucUuTien',
   }
 ]
 function RenderChiTieu({ chi_tieu_tuyen_sinh }) {
@@ -150,7 +231,10 @@ function RenderChiTieu({ chi_tieu_tuyen_sinh }) {
 export default function DotTuyenSinh() {
   // Khai báo
   const [loading, setLoading] = useState(true);
+  const [loading_dsxt, setLoading_dsxt] = useState(true);
   const [dataDotTuyenSinh, setDataDotTuyenSinh] = useState(null);
+  const [danh_sach_trung_tuyen, setDanh_sach_trung_tuyen] = useState([]);
+  const [danh_sach_nguyen_vong, setDanh_sach_nguyen_vong] = useState([]);
   const [fileInput, setFileInput] = useState(null);
   const [modalResultControl, setModalResultControl] = useState({ open: false, title: "DANH SÁCH NGUYỆN VỌNG XÉT TUYỂN HỢP LỆ", loading: false, data: null });
   const maDotTuyenSinh = useParams().maDotTuyenSinh;
@@ -189,19 +273,38 @@ export default function DotTuyenSinh() {
   // Effect
   useEffect(() => {
     dispatch(reset())
-    if (maDotTuyenSinh)
+    if (maDotTuyenSinh) {
+      setLoading(true);
+      TuyenSinhAPI.getDSXTDotTuyenSinh(maDotTuyenSinh).then(res => {
+        console.log('res.data :>> ', res.data.length);
+        setDanh_sach_nguyen_vong(res.data);
+      }).finally(() => {
+        showMessage('success', 'Lấy thông tin đợt tuyển sinh thành công');
+        setLoading_dsxt(false);
+      })
+      TuyenSinhAPI.getDSTTDotTuyenSinh(maDotTuyenSinh).then(res => {
+
+        console.log('res.data :>> ', res.data);
+        setDanh_sach_trung_tuyen(res.data);
+      })
       TuyenSinhAPI.getThongTinDotTuyenSinh(maDotTuyenSinh).then(
         (res) => {
-          setDataDotTuyenSinh(res.data);
+          console.log('res.data :>> ', res.data.danh_sach_trung_tuyen);
+          setDataDotTuyenSinh({
+            ...dataDotTuyenSinh,
+            ...res.data,
+            // danh_sach_trung_tuyen: res.data.danh_sach_trung_tuyen.map(item => flattenObj(item)),
+            // danh_sach_nguyen_vong: res.data.danh_sach_nguyen_vong.map(item => flattenObj(item)),
+          });
           ;
-          showMessage('success', 'Lấy thông tin đợt tuyển sinh thành công');
-          console.log('res.data :>> ', res.data.danh_sach_nguyen_vong);
+
         }
       ).catch(err => {
         showMessage("error", "Lỗi khi lấy thông tin đợt tuyển sinh tuyển sinh");
       }).finally(() => {
         setLoading(false);
-      });
+      })
+    }
   }, [maDotTuyenSinh]);
   // fetch data
   const fetch = async () => {
@@ -264,12 +367,19 @@ export default function DotTuyenSinh() {
     })
 
   }
-  const onClickDownDSTT = () => {
-    showMessage('success', 'Xử  tải xuống ở đây');
-  }
+  const onClickDownDSTT = (columns, dataSource, file_name) => {
+    const excel = new Excel();
+    excel
+      .addSheet("test")
+      .addColumns(columns)
+      .addDataSource(dataSource, {
+        str2Percent: true
+      })
+      .saveAs(`DotTuyenSinh-${dataDotTuyenSinh.tenDotTuyenSinh}-${file_name}.xlsx`);
+  };
   const onOkUploadChiTieu = () => {
-    fetch();
     showMessage('success', 'Upload chỉ tiêu thành công');
+    fetch();
   }
   return (
     <div style={{ overflowX: 'scroll' }}>
@@ -284,9 +394,10 @@ export default function DotTuyenSinh() {
                 <p>Tổng trúng tuyển: {dataDotTuyenSinh._count.danh_sach_nguyen_vong}></p> */}
                 <p>Tổng ngành tuyển: {dataDotTuyenSinh._count.chi_tieu_tuyen_sinh}</p>
                 {dataDotTuyenSinh._count.chi_tieu_tuyen_sinh > 0
-                  ? <RenderChiTieu chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
-                  : <UploadChiTieuTuyenSinh onOk={onOkUploadChiTieu} maDotTuyenSinh={maDotTuyenSinh} />
-                }
+                  && <RenderChiTieu chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
+                } 
+                <UploadChiTieuTuyenSinh onOk={onOkUploadChiTieu} maDotTuyenSinh={maDotTuyenSinh} />
+                
                 <Row>
                   <ChiTieuArrayFields submitChiTieu={handleSubmitChiTieu} existNganh={dataDotTuyenSinh.chi_tieu_tuyen_sinh.map(x => (x.maNganh))} />
                 </Row>
@@ -300,32 +411,37 @@ export default function DotTuyenSinh() {
                 items={[{
                   label: `DANH SÁCH XÉT TUYỂN`,
                   key: '1',
-                  children: <Row>
+                  children: <Spin spinning={loading_dsxt}> <Row>
                     <p>File Excel cần có Sheet tên "Mini" chứa dữ liệu cần trích xuất. Các Header của cột phải nằm ở hàng trên cùng. Các cột <span style={{ color: 'red' }}>Số Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng, Mã Tổ Hợp Xét Tuyển</span> là bắt buộc</p>
                     <p>Có Thể <Button type='link' icon={< DownloadOutlined />}>Tải Template</Button> để điền thông tin sau đó nộp</p>
 
                     <Space style={{ padding: 5 }}>
                       <UploadButton onUpload={upFileHandler} />
+                      <Button type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_xettuyen_columns, danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind })), 'DSNguyenVong')} >Tải về File DSXT</Button>
                     </Space>
-                    {dataDotTuyenSinh.danh_sach_nguyen_vong.length > 0 && <AntTable
+                    {danh_sach_nguyen_vong.length > 0 && <AntTable
                       columns={ds_xettuyen_columns}
-                      rows={dataDotTuyenSinh.danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind }))}
+                      rows={danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind }))}
                     // rowKey="stt"
                     />}
-                  </Row>
+                  </Row></Spin>
                 },
                 {
                   label: `DANH SÁCH TRÚNG TUYỂN TUYỂN`,
                   key: '2',
-                  children: <Row>
+                  children: <Spin spinning={loading_dsxt} > <Row>
                     <Space style={{ padding: 5 }}>
-                      <Button type='primary' icon={< DownloadOutlined />} onClick={onClickDownDSTT} >Tải về</Button>
+                      <Button type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_tt_columns, danh_sach_trung_tuyen, 'DSTrungTuyen')} >Tải về</Button>
                     </Space>
+
+
                     <AntTable
                       columns={ds_tt_columns}
-                      rows={dataDotTuyenSinh.danh_sach_trung_tuyen}
+                      rows={danh_sach_trung_tuyen}
                       rowKey="soBaoDanh"
-                    /></Row>
+                    />
+                  </Row>
+                  </Spin>
                 }]} />
             </Row>
             <Divider />

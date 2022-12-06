@@ -166,6 +166,7 @@ export default function NguoiDung() {
         </Space>
     }
   ]
+
   const fetchData = () => {
     // TuyenSinhAPI.getAccount().then((res) => {
     //   setDataAccount(res.data);
@@ -190,7 +191,7 @@ export default function NguoiDung() {
       <Spin spinning={loading} >
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
-            <Button onClick={() => showDialogModal('CREATE-ACCOUNT', columns.slice(0, 4), "Thêm Account")} > Thêm Account</Button>
+            <Button onClick={() => showDialogModal('CREATE-ACCOUNT', columns.slice(0, 2), "Thêm Account")} > Thêm Account</Button>
             <SearchBar onSearching={e=>{}} label="Tìm Kiếm Account" />
           </Space>
         </Row>

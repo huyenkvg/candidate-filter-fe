@@ -12,6 +12,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Complextable from "../../../components/table/ComplexTable";
 import { FormTaoKhoa } from "../local-components/FormTaoKhoa";
 import SearchBar from "../local-components/SearchBar";
+import YearPicker from "../../../components/input/YearPicker";
 
 
 
@@ -80,6 +81,7 @@ export default function KhoaTuyenSinh() {
       title: 'Tên khoá',
       dataIndex: 'tenKhoa',
       key: 'tenKhoa',
+      type: 'year',
       render: (text, record) => (
         <Button type="link" >{text}</Button>
       )
@@ -117,7 +119,7 @@ export default function KhoaTuyenSinh() {
             icon={<EyeOutlined />}
           >DS trúng tuyển</Button>
           {/* <Button type="primary" shape="circle" size="small" icon={<DownloadOutlined />} onClick={() => handleClick(record, 'VIEW-ROW')} loading={loading} /> */}
-          <Button type='primary' size="small" onClick={() => handleClick(record, 'EDIT-ROW')} icon={<EditOutlined />}  >Sửa Tên</Button>
+          {/* <Button type='primary' size="small" onClick={() => handleClick(record, 'EDIT-ROW')} icon={<EditOutlined />}  >Sửa Tên</Button> */}
           <Button danger type='primary' size="small" onClick={() => handleClick(record, 'DELETE-ROW')} icon={<DeleteOutlined />}>Xóa</Button>
         </Space>
       ),
@@ -196,7 +198,8 @@ export default function KhoaTuyenSinh() {
     console.log('formValues :>> ', formValues);
     switch (type) {
       case 'CREATE-KHOATUYENSINH':
-        TuyenSinhAPI.createKhoaTuyenSinh(formValues).then((res) => {
+        let nienKhoa = new Date(formValues.tenKhoa).getFullYear();
+        TuyenSinhAPI.createKhoaTuyenSinh({tenKhoa: nienKhoa }).then((res) => {
           showMessage('success', 'Tạo khoá tuyển sinh thành công');
           dispatch(addKhoaTuyenSinh(res.data));
         }).catch((err) => {

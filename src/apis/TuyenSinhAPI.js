@@ -53,6 +53,18 @@ export default class TuyenSinhAPI {
     })
   }
 
+  static getDSXTDotTuyenSinh = (id) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/dot-tuyen-sinh/dsxt/${id}`,
+    })
+  }
+  static getDSTTDotTuyenSinh = (id) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/dot-tuyen-sinh/dstt/${id}`,
+    })
+  }
   static getThongTinDotTuyenSinh = (id) => {
     return axios({
       method: "GET",

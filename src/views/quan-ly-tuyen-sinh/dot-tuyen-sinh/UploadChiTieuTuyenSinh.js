@@ -101,6 +101,8 @@ export default function UploadChiTieuTuyenSinh({ onOk, maDotTuyenSinh }) {
         if (res.data.error) {
           showMessage('error', res.data.error);
         }
+        onOk()
+        setModalControl({ open: false, data: { columns: [], rows: [] } });
         // setFileInput(data);
       }).catch(err => {
         setFile(null);

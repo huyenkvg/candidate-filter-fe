@@ -22,7 +22,7 @@ function getItem(label, key, icon, children) {
 const items = [
   getItem('Người Dùng', 'nguoi-dung', <TeamOutlined />),
   getItem('Thống Kê', 'thong-ke', <TeamOutlined />),
-  getItem('Lọc Trúng Tuyển', 'loc-trung-tuyen', <UserOutlined />),
+  getItem('Tool Lọc', 'loc-trung-tuyen', <UserOutlined />),
   ,
   getItem('Tuyển Sinh', 'tuyen-sinh', <UserOutlined />, [
     getItem('Khoá Tuyển Sinh', 'khoa-tuyen-sinh', <UserOutlined />),

@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select } from 'antd';
+import { Button, DatePicker, Form, Input, Select } from 'antd';
 import React, { useEffect, useRef } from 'react';
 const { Option } = Select;
 const layout = {
@@ -37,6 +37,13 @@ export function FormTaoKhoa({schema, onSubmit, prevValues, onCancel, onOk}) {
     <Form {...layout} ref={formRef} name="control-ref" onFinish={onFinish}>
       {
         schema.map((item, index) => {
+          if (item.type == 'year') {
+            return (
+              <Form.Item key={index} name={item.dataIndex} label={item.title} rules={[{ required: true }]}>
+                <DatePicker picker="year" />
+              </Form.Item>
+            )
+          }
           return (
             <Form.Item key={index} name={item.dataIndex} label={item.title}  rules={[{ required: true }]}>
               <Input   type={item.type || 'text'} />

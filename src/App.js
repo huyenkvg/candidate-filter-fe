@@ -15,6 +15,7 @@ import Nganh from './views/quan-ly-tuyen-sinh/nganh/Nganh';
 import ToHopXetTuyen from './views/quan-ly-tuyen-sinh/to-hop/ToHopXetTuyen';
 import NguoiDung from './views/users/NguoiDung';
 import HoSoTuyenSinh from './views/quan-ly-tuyen-sinh/HoSoTuyenSinh';
+import ThongKe from './views/thong-ke/ThongKe';
 
 function App() {
   const user = useSelector(state => state.userSlice);
@@ -22,6 +23,7 @@ function App() {
 
   const privateRoutes = [
         { path: '/', element:  <TuyenSinh /> },
+        { path: '/thong-ke', element:  <ThongKe/> },
         { path: '/loc-trung-tuyen', element: <TuyenSinh /> },
         { path: '/khoa-tuyen-sinh', element: <KhoaTuyenSinh /> },
         { path: '/nguoi-dung', element: <NguoiDung /> },
