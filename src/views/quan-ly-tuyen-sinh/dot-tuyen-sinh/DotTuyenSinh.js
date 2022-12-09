@@ -52,15 +52,17 @@ const ds_xettuyen_columns = [
 
   },
   {
-    title: 'soBaoDanh',
+    title: 'Số báo danh',
     dataIndex: 'soBaoDanh',
     key: 'soBaoDanh',
 
+    width: 200,
   },
   {
-    title: 'nguyenVong',
+    title: 'Nguyện Vọng',
     dataIndex: 'nguyenVong',
     key: 'nguyenVong',
+    width: 10,
   },
   {
     title: 'Mã Ngành',
@@ -78,48 +80,58 @@ const ds_xettuyen_columns = [
     title: 'cmnd',
     dataIndex: 'cmnd',
     key: 'cmnd',
+    width: 100,
   },
   {
     title: 'Địa Chỉ Nhận Giấy Báo',
     dataIndex: 'diaChiNhanGiayBao',
     key: 'diaChiNhanGiayBao',
+    width: 200,
   },
   {
     title: 'Email',
     dataIndex: 'email',
     key: 'email',
+    
+    width: 150,
   },
   {
     title: 'Giới Tính',
     dataIndex: 'gioiTinh',
     key: 'goiTinh',
+    width: 100,
   },
   {
     title: 'Mã Tỉnh',
     dataIndex: 'maTinh',
     key: 'maTinh',
+    width: 150,
   },
   {
     title: 'Mã Trường',
     dataIndex: 'maTruong',
     key: 'maTinh',
+    width: 150,
   },
   {
     title: 'Khu Vực Ưu Tiên',
     dataIndex: 'khuVucUuTien',
     key: 'khuVucUuTien',
+    width: 200,
   },
   {
     title: 'maToHopXetTuyen',
     dataIndex: 'maToHopXetTuyen',
     key: 'maToHopXetTuyen',
-    width: 100,
+    width: 200,
 
   },
   {
     title: 'tongDiem',
     dataIndex: 'tongDiem',
     key: 'tongDiem',
+   
+    width: 100,
   },
 ]
 const ds_tt_columns = [
@@ -321,7 +333,7 @@ export default function DotTuyenSinh() {
   // Render
   const onSaveDSXT = () => {
     if (fileInput) {
-      // setModalResultControl({ ...modalResultControl, open: false });
+      setModalResultControl({ ...modalResultControl, open: false });
       setLoading(true);
       TuyenSinhAPI.saveDSXT_DotTuyenSinh(maDotTuyenSinh, fileInput).then(res => {
         showMessage('success', 'Lưu danh sách xét tuyển thành công');

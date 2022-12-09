@@ -41,15 +41,26 @@ export default function NguoiDung() {
     console.log('formValues :>> ', formValues);
     switch (type) {
       case 'CREATE-ACCOUNT':
+        let payload = {
+          username: formValues.email,
+          password: 'ptit@@123456',
+          // email: formValues.email,
+          // phone: formValues.phone,
+          // firstname: formValues.firstname,
+          // lastname: formValues.lastname,
+          role_id: 1
+        }
         AuthAPI.createAccount(formValues)
           .then((res) => {
             showMessage('success', 'Tạo Account thành công');
-            setDataModal({ ...dataModal, open: false });
-            setDataAccount(dataAccount.push(res.data));
+            // setDataModal({ ...dataModal, open: false });
+            // setDataAccount(dataAccount.push(res.data));
+            fetchData();
             setLoading(false);
           }).catch((err) => {
             setLoading(false);
-            showMessage('error', 'Tạo Account thất bại, Mã Account đã tồn tại');
+            
+            showMessage('error', 'Tạo Account thất bại');
           });
         break;
       case 'EDIT-ACCOUNT':
@@ -108,6 +119,25 @@ export default function NguoiDung() {
         break;
     }
   }
+  const formschema = [
+    {
+      title: 'Tên',
+      dataIndex: 'firstname',
+    },
+    {
+      title: 'Họ',
+      dataIndex: 'lastname',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+    },{
+      title: 'Số Điện thoại',
+      dataIndex: 'phone',
+    },
+
+
+  ]
 
   const handleOk = () => {
     setDataModal({ ...dataModal, open: false, typeSubmit: null, prevData: {} });
@@ -125,6 +155,14 @@ export default function NguoiDung() {
       title: 'Tài Khoản',
       dataIndex: 'username',
       key: 'tenAccount',
+    },{
+      title: 'Phân Quyền',
+      dataIndex: 'role',
+      key: 'role',
+      render: role => {
+        return role.name
+      },
+      width: 100
     },
     {
       title: 'Email',
@@ -168,11 +206,13 @@ export default function NguoiDung() {
   ]
 
   const fetchData = () => {
-    // TuyenSinhAPI.getAccount().then((res) => {
-    //   setDataAccount(res.data);
-    // }).finally(() => {
-    //   setLoading(false);
-    // })
+    AuthAPI.getDanhSachAccount().then((res) => {
+      setDataAccount(res.data);
+      setLoading(false);
+    }).catch((err) => {
+      console.log(err);
+      setLoading(false);
+    })
   }
 
   useEffect(() => {
@@ -191,7 +231,7 @@ export default function NguoiDung() {
       <Spin spinning={loading} >
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
-            <Button onClick={() => showDialogModal('CREATE-ACCOUNT', columns.slice(0, 2), "Thêm Account")} > Thêm Account</Button>
+            <Button onClick={() => showDialogModal('CREATE-ACCOUNT', formschema, "Thêm Account")} > Thêm Account</Button>
             <SearchBar onSearching={e=>{}} label="Tìm Kiếm Account" />
           </Space>
         </Row>

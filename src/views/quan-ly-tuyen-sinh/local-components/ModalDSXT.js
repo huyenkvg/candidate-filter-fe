@@ -6,7 +6,7 @@ import AntTable from '../../../components/table/AntTable';
 
 const ModalDSXT = ({ open, tenDotTuyenSinh,  title, loading, onCancel, data, onSaveDSXT, ...props }) => {
   const columns = useSelector((state) => state.candidates).columns.map((c) => ({ ...c, width: 150 }));
-
+  
   const rows = useSelector((state) => state.candidates).dataXetTuyen.valid;
   const invalidRows = useSelector((state) => state.candidates).dataXetTuyen.invalid;
   const [openMini, setOpenMini] = useState(true);
@@ -17,6 +17,7 @@ const ModalDSXT = ({ open, tenDotTuyenSinh,  title, loading, onCancel, data, onS
       title: 'Lưu danh sách xét tuyển',
       subTitle: `Hệ thống sẽ xoá toàn bộ danh sách cũ và thay vào danh sách xét tuyển này của đợt tuyển sinh ${tenDotTuyenSinh}. Bạn có chắc chắn muốn lưu danh sách xét tuyển?`,
     });
+
   }
   return (
     <>
