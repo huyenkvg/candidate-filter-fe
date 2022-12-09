@@ -60,7 +60,9 @@ export default function ThongKe() {
       dataIndex: 'so_luong_thi_sinh_dat',
     }
   ]
-
+  const onGetData = (data) => {
+    setData(data);
+  }
   return (
     <div>
       <Row>
@@ -83,24 +85,24 @@ export default function ThongKe() {
               
               setFilterOption({
                 ...filterOption,
-                khoa_end:  data.hoa_end?._d.getFullYear() || new Date().getFullYear(),
-                khoa_start: data.khoa_start?._d.getFullYear() || 0});
+                khoa_end:  data.hoa_end?._d.getFullYear() || filterOption.khoa_end || data.khoa_start?._d.getFullYear() || new Date().getFullYear(),
+                khoa_start: data.khoa_start?._d.getFullYear() || filterOption.khoa_start || data.hoa_end?._d.getFullYear() || new Date().getFullYear()});
             }}
             style={{width: '100%'}}
             autoComplete="off"
           >
             <Form.Item  key={1} name={'khoa_start'} label={'Khoá bắt đầu'} rules={[{ required: true }]}>
-              <DatePicker picker="year" />
+              <DatePicker picker="year" value={filterOption.khoa_start} />
             </Form.Item>
             <Form.Item key={2} name={'khoa_end'} label={'Khoá kết thúc'} rules={[{ required: true }]}>
-              <DatePicker picker="year" />
+              <DatePicker picker="year"   value={filterOption.khoa_end}/>
             </Form.Item>
           </Form>
         </Space>
       </Row>
       <Divider />
       <Row>
-        <Chart {...filterOption}/>
+        <Chart {...filterOption} onGetData={onGetData}/>
       </Row>
       <Row>
         <Space style={{margin:2}}>
@@ -109,7 +111,6 @@ export default function ThongKe() {
         </Space>
 
         <AntTable
-
           columns={columns}
           rows={data}
         />
