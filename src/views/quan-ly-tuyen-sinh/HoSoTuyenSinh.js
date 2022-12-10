@@ -30,7 +30,12 @@ function showMessage(type, content) {
 
 
 export default function HoSoTuyenSinh() {
-
+  const [openConfirm, setOpenConfirm] = useState({
+    open: false,
+    title: '',
+    record: {},
+    typeSubmit: "DELETE-ALL-HO-SO",
+  });
   const [loading, setLoading] = useState(true);
   const [dataHoSo, setDataHoSo] = useState(null);
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
@@ -85,6 +90,16 @@ export default function HoSoTuyenSinh() {
 
 
         break;
+      case 'DELETE-ALL-HO-SO':
+        setOpenConfirm({ ...openConfirm, open: false });
+        TuyenSinhAPI.deleteAllHoSo(formValues.maKhoaTuyenSinh)
+          .then((res) => {
+            showMessage('success', 'Xóa Hồ sơ công');
+            setLoading(false);
+          }).catch((err) => {
+            showMessage('error', 'Xóa Hồ sơ thất bại');
+            setLoading(false);
+          })
       default:
         break;
 
@@ -228,6 +243,15 @@ export default function HoSoTuyenSinh() {
               style={{ width: '200px'}}
               options={dataKhoa}
             />
+            {params.maKhoaTuyenSinh !== 'all' && <Button type="default" danger icon={<DeleteOutlined />} onClick={() => {
+              setOpenConfirm({
+                open: true,
+                record: { maKhoaTuyenSinh: params.maKhoaTuyenSinh },
+                title: `Loại Bỏ các hồ sơ không có nguyện vọng nào của khoá ${params.maKhoaTuyenSinh}`,
+                typeSubmit: 'DELETE-ALL-HO-SO',
+
+              })
+            }} > Clear Hồ Sơ Rác</Button>}
             <Button onClick={() => showDialogModal('CREATE-HO-SO', columns.slice(0, 7), "Thêm HoSo")} > Thêm HoSo</Button>
             <SearchBar label="Tìm Kiếm Thí Sinh" onSearching={onSearching}/>
            
@@ -242,6 +266,11 @@ export default function HoSoTuyenSinh() {
         <Modal title={dataModal.title} open={dataModal.open} footer={false} style={{ padding: '5px' }} onCancel={handleCancel}>
           <FormTaoKhoa onOk={handleOk} prevValues={dataModal.prevData} onCancel={handleCancel} onSubmit={(form) => handleSubmit(form, dataModal.typeSubmit)} schema={dataModal.schema || []} />
         </Modal>
+        {openConfirm.open && <Modal open={openConfirm.open} title={openConfirm.title} style={{ padding: '5px' }} onOk={() => handleSubmit(openConfirm.record, openConfirm.typeSubmit)} onCancel={() => {
+          setOpenConfirm({
+            ...openConfirm, open: false,
+          })
+        }} />}
       </Spin>
     </div>
   )

@@ -25,7 +25,7 @@ const ModalDSXT = ({ open, tenDotTuyenSinh,  title, loading, onCancel, data, onS
         key="q"
         title={<><Space>{title}
           {/* <Button type='default' icon={< DownloadOutlined />}>Tải Về</Button> */}
-          <Button type='primary' onClick={onClickSaveDSXT} icon={<SaveTwoTone />}>Lưu Vào Database</Button>
+          <Button type='primary' onClick={onClickSaveDSXT} icon={<SaveTwoTone />}>Lọc Trúng Tuyển File này</Button>
         </Space>
           <Row><h3 style={{ color: '#185adb', textDecoration: 'underline' }}>{`${rows.length} Hồ Sơ Hợp Lệ`}</h3></Row></>
         }

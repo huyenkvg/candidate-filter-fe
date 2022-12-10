@@ -138,7 +138,8 @@ export default function KhoaTuyenSinh() {
         // console.log(record, type);
         break;
       case 'DELETE-ROW':
-        handleSubmit(record, 'DELETE-KHOATUYENSINH')
+        // handleSubmit(record, 'DELETE-KHOATUYENSINH')
+        setOpenConfirm({ open: true, title: `Bạn có chắc muốn xoá khoá tuyển sinh ${record.tenKhoa} ?`, record, typeSubmit: 'DELETE-KHOATUYENSINH' })
         // handleDelete(record);
         break;
       case 'VIEW-ROW':
@@ -152,7 +153,8 @@ export default function KhoaTuyenSinh() {
         showDialogModal('EDIT-DOTTUYENSINH', [dot_tuyen_sinh_columns[0]], "Sửa Đợt Tuyển Sinh", record)
         break;
       case 'MINI-DELETE-ROW':
-        handleSubmit(record, 'DELETE-DOTTUYENSINH')
+        // handleSubmit(record, 'DELETE-DOTTUYENSINH')
+        setOpenConfirm({ open: true, title: `Bạn có chắc muốn xoá toàn bộ dữ liệu đợt tuyển sinh ${record.tenDotTuyenSinh} không?`, record, typeSubmit: 'DELETE-DOTTUYENSINH' })
         // console.log(record);
         break;
       case 'MINI-VIEW-XETTUYEN':
@@ -172,6 +174,12 @@ export default function KhoaTuyenSinh() {
 
   // Form Submit
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
+  const [openConfirm, setOpenConfirm] = useState({
+    open: false,
+    title: '',
+    record: {},
+    typeSubmit: "DELETE-KHOATUYENSINH",
+  });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });
   };
@@ -220,6 +228,7 @@ export default function KhoaTuyenSinh() {
         })
         break;
       case 'DELETE-KHOATUYENSINH':
+        setOpenConfirm({ ...openConfirm, open: false });
         TuyenSinhAPI.deleteKhoaTuyenSinh(formValues).then((res) => {
           showMessage('success', 'Xóa khoá tuyển sinh thành công');
           dispatch(removeKhoaTuyenSinh(formValues));
@@ -253,6 +262,7 @@ export default function KhoaTuyenSinh() {
       }
         break;
       case 'DELETE-DOTTUYENSINH':
+        setOpenConfirm({ ...openConfirm, open: false });
         TuyenSinhAPI.deleteDotTuyenSinh(formValues).then((res) => {
           showMessage('success', 'Xóa đợt tuyển sinh thành công');
           dispatch(removeDotTuyenSinh(formValues));
@@ -324,6 +334,11 @@ export default function KhoaTuyenSinh() {
       <Modal title={dataModal.title} open={dataModal.open} footer={false} style={{ padding: '5px' }} onCancel={handleCancel}>
         <FormTaoKhoa onOk={handleOk} prevValues={dataModal.prevData} onCancel={handleCancel} onSubmit={(form) => handleSubmit(form, dataModal.typeSubmit)} schema={dataModal.schema || []} />
       </Modal>
+      {openConfirm.open && <Modal open={openConfirm.open} title={openConfirm.title} style={{ padding: '5px' }} onOk={() => handleSubmit(openConfirm.record, openConfirm.typeSubmit)} onCancel={() => {
+        setOpenConfirm({
+          ...openConfirm, open: false,
+        })
+      }} />}
     </div >
   );
 }

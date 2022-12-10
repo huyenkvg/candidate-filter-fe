@@ -156,4 +156,11 @@ export default class TuyenSinhAPI {
       params: params
     })
   }
+  //================================================================
+  static deleteAllHoSo = (khoa) => {
+    return axios({
+      method: "DELETE",
+      url: `http://localhost:3000/thong-tin-ca-nhan/delete-all-by-khoa/${khoa}`,
+    })
+  }
 }
