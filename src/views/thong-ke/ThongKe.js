@@ -85,8 +85,8 @@ export default function ThongKe() {
               
               setFilterOption({
                 ...filterOption,
-                khoa_end:  data.hoa_end?._d.getFullYear() || filterOption.khoa_end || data.khoa_start?._d.getFullYear() || new Date().getFullYear(),
-                khoa_start: data.khoa_start?._d.getFullYear() || filterOption.khoa_start || data.hoa_end?._d.getFullYear() || new Date().getFullYear()});
+                khoa_end:  data.khoa_end?._d.getFullYear() || filterOption.khoa_end || data.khoa_start?._d.getFullYear() || new Date().getFullYear(),
+                khoa_start: data.khoa_start?._d.getFullYear() || filterOption.khoa_start || data.khoa_end?._d.getFullYear() || new Date().getFullYear()});
             }}
             style={{width: '100%'}}
             autoComplete="off"

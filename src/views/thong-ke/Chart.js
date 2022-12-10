@@ -15,7 +15,7 @@ import { Col } from "antd";
 import ThongKeAPI from "../../apis/ThongKeAPI";
 
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const COLORS = ['#546e7a', '#64dd17', '#ec407a', '#0088FE', '#651fff', '#00C49F', '#FFBB28', '#795548', '#FF8042'];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
@@ -32,36 +32,40 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
 
 function LineChartDiem(props) {
   const data =(props.data);
-  let lines = [];
+  let lines = {};
   const values = data.reduce((resp, item) => {
-    const { maNganh, tenKhoa, tenDotTuyenSinh, diemChuan } = item;
-    let acc = resp.find((item) => item.name === tenKhoa+"-"+ tenDotTuyenSinh) || {};
-    acc[maNganh] = diemChuan;
-    if (!resp.find((item) => item.name === tenKhoa+"-"+ tenDotTuyenSinh)) {
+    const { maNganh, tenKhoa, tenDotTuyenSinh, diemChuan, tenNganh } = item;
+    lines[tenNganh] = [tenNganh]
+    let acc = resp.find((item) => item.name == tenKhoa+"-"+ tenDotTuyenSinh);   
+    if (!acc) { 
+      acc={};
+      acc[tenNganh] = diemChuan;
       acc['name'] = tenKhoa+"-"+ tenDotTuyenSinh;
       resp.push(acc);
-      lines.push(maNganh);
     }
     else {
+      acc[tenNganh] = diemChuan;
       resp[resp.findIndex((item) => item.name === tenKhoa+"-"+ tenDotTuyenSinh)] = acc;
     }
     return resp;
   }, []);
   console.log('data  values :>> ', values);
+  console.log('data  lines :>> ', lines);
+
   return (
-    <>
-      <LineChart width={1000} height={350} data={values}
-        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+
+    <ResponsiveContainer width="100%" height={350}>
+    <LineChart width={1300} height={250} data={values}
+      margin={{ top: 15, right: 30, left: 20, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" />
         <YAxis />
         <Tooltip />
-        <Legend />
-        {lines.map((item, index) => (
-          <Line type="monotone" dataKey={item.maNganh} stroke="#8884d8" activeDot={{ r: 8 }} />
+      <Legend /> 
+      {Object.keys(lines).map((item, index) => (
+        <Line type="monotone" dataKey={item} stroke={COLORS[index % COLORS.length]} activeDot={{ r: 8 }} />
         ))}
-      </LineChart>
-    </>
+    </LineChart></ResponsiveContainer>
   )
 }
 function NganhPieChart(props) {
@@ -84,7 +88,7 @@ function NganhPieChart(props) {
             value,
             index
           }) => {
-            console.log("handling label?", index);
+            // console.log("handling label?", index);
             const RADIAN = Math.PI / 180;
             // eslint-disable-next-line
             const radius = 25 + innerRadius + (outerRadius - innerRadius);
@@ -131,10 +135,10 @@ export default function Chart({ khoa_start, khoa_end, mode, onGetData, ...props 
     danh_sach_diem_chuan: []
   });
   console.log('props :>> ', props);
-  useEffect(() => {
     console.log('khoa_start :>> ', khoa_start);
     console.log('khoa_end :>> ', khoa_end);
     console.log('mode :>> ', mode);
+  useEffect(() => {
     if (!khoa_start || !khoa_end) return;
     ThongKeAPI.getThongKe({ khoa_start, khoa_end, mode, ...props })
     .then(res => {
@@ -191,8 +195,8 @@ export default function Chart({ khoa_start, khoa_end, mode, onGetData, ...props 
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey='Số lượng trúng tuyển' stackId="a" fill="#8884d8" />
-            <Bar dataKey="Số lượng nguyện vọng" stackId="a" fill="#82ca9d" />
+            <Bar dataKey='Số lượng trúng tuyển' stackId="a" fill='#ff9800' />
+            <Bar dataKey="Số lượng nguyện vọng" stackId="a" fill="#607d8b" />
           </BarChart>
         </ResponsiveContainer>
       </Col>
@@ -201,9 +205,7 @@ export default function Chart({ khoa_start, khoa_end, mode, onGetData, ...props 
           <NganhPieChart data={data.pie} />
         </ResponsiveContainer>
       </Col>
-      <ResponsiveContainer width="100%" height={350}>
         <LineChartDiem data={data.danh_sach_diem_chuan} />
-      </ResponsiveContainer>
     </>
   );
 }
