@@ -63,7 +63,7 @@ function LineChartDiem(props) {
         <Tooltip />
       <Legend /> 
       {Object.keys(lines).map((item, index) => (
-        <Line type="monotone" dataKey={item} stroke={COLORS[index % COLORS.length]} activeDot={{ r: 8 }} />
+        <Line key={index}  dataKey={item} stroke={COLORS[index % COLORS.length]} activeDot={{ r: 8 }} />
         ))}
     </LineChart></ResponsiveContainer>
   )

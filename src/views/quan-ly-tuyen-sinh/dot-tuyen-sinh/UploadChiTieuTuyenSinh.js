@@ -117,7 +117,8 @@ export default function UploadChiTieuTuyenSinh({ onOk, maDotTuyenSinh }) {
   }
 
   return (
-    <Space style={{ padding: 5 }}>
+    <Space style={{ }}>
+      <h4>Tải lên danh sách chỉ tiêu của ngành</h4>
       <UploadButton onUpload={upFileHandler} />
       <Modal
 

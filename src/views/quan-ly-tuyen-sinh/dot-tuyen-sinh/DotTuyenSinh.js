@@ -14,6 +14,8 @@ import ModalDSXT from "../local-components/ModalDSXT";
 import UploadChiTieuTuyenSinh from "./UploadChiTieuTuyenSinh";
 
 import { Excel } from "antd-table-saveas-excel";
+import XacNhanNhapHoc from "./XacNhanNhapHoc";
+import DiemChuanDuKien from "./DiemChuanDuKien";
 
 function showMessage(type, content) {
   switch (type) {
@@ -77,6 +79,20 @@ const ds_xettuyen_columns = [
     key: 'hoTen',
   },
   {
+    title: 'Mã Tổ Hợp Xét Tuyển',
+    dataIndex: 'maToHopXetTuyen',
+    key: 'maToHopXetTuyen',
+    width: 200,
+
+  },
+  {
+    title: 'Tổng Điểm',
+    dataIndex: 'tongDiem',
+    key: 'tongDiem',
+
+    width: 100,
+  },
+  {
     title: 'cmnd',
     dataIndex: 'cmnd',
     key: 'cmnd',
@@ -118,20 +134,6 @@ const ds_xettuyen_columns = [
     dataIndex: 'khuVucUuTien',
     key: 'khuVucUuTien',
     width: 200,
-  },
-  {
-    title: 'maToHopXetTuyen',
-    dataIndex: 'maToHopXetTuyen',
-    key: 'maToHopXetTuyen',
-    width: 200,
-
-  },
-  {
-    title: 'tongDiem',
-    dataIndex: 'tongDiem',
-    key: 'tongDiem',
-   
-    width: 100,
   },
 ]
 const ds_tt_columns = [
@@ -233,7 +235,7 @@ function RenderChiTieu({ chi_tieu_tuyen_sinh }) {
               {item.chi_tieu_to_hop.map((x) => (<p key={x.maToHop}>{x.maToHop} : {x.chiTieu} (Thí sinh)</p>))}
             </Space>
         }
-        <Divider />
+        <Divider style={{ margin: '2px' }} />
       </>
       ))}
     </>
@@ -243,6 +245,7 @@ function RenderChiTieu({ chi_tieu_tuyen_sinh }) {
 export default function DotTuyenSinh() {
   // Khai báo
   const [loading, setLoading] = useState(true);
+  const [reload, setReload] = useState(false);
   const [loading_dsxt, setLoading_dsxt] = useState(true);
   const [dataDotTuyenSinh, setDataDotTuyenSinh] = useState(null);
   const [danh_sach_trung_tuyen, setDanh_sach_trung_tuyen] = useState([]);
@@ -317,20 +320,29 @@ export default function DotTuyenSinh() {
         setLoading(false);
       })
     }
-  }, [maDotTuyenSinh]);
+  }, [maDotTuyenSinh, reload]);
   // fetch data
   const fetch = async () => {
-    if (maDotTuyenSinh)
-      TuyenSinhAPI.getThongTinDotTuyenSinh(maDotTuyenSinh).then(
-        (res) => {
-          setDataDotTuyenSinh(res.data);
-        }
-      ).catch(err => {
-      }).finally(() => {
-        setLoading(false);
-      });
+    setReload(!reload);
   }
   // Render
+  const onSaveTuyenThang = () => {
+    if (fileInput) {
+      setModalResultControl({ ...modalResultControl, open: false });
+      setLoading(true);
+      TuyenSinhAPI.saveTuyenThang(maDotTuyenSinh, fileInput).then(res => {
+        showMessage('success', 'Lưu danh sách tuyển thẳng thành công');
+        fetch();
+      }).catch(err => {
+        showMessage('error', 'Lưu danh sách  tuyển thẳng thất bại');
+      }).finally(() => {
+        setLoading(false);
+      })
+    }
+    else {
+      showMessage('error', 'Đã có lỗi xảy ra, vui lòng thao tác lại');
+    }
+  }
   const onSaveDSXT = () => {
     if (fileInput) {
       setModalResultControl({ ...modalResultControl, open: false });
@@ -393,6 +405,8 @@ export default function DotTuyenSinh() {
     showMessage('success', 'Upload chỉ tiêu thành công');
     fetch();
   }
+
+
   return (
     <div style={{ overflowX: 'scroll' }}>
       <Spin spinning={loading} >
@@ -400,7 +414,7 @@ export default function DotTuyenSinh() {
         <Row>
           {!loading && dataDotTuyenSinh && <Col span={24}>
             <Row>
-              <Col span={24}>
+              <Col span={14}>
                 <h3>Thông tin đợt tuyển sinh {dataDotTuyenSinh.tenDotTuyenSinh}</h3>
                 {/* <p>Tổng nguyện vọng: {dataDotTuyenSinh._count.danh_sach_trung_tuyen}</p>
                 <p>Tổng trúng tuyển: {dataDotTuyenSinh._count.danh_sach_nguyen_vong}></p> */}
@@ -414,6 +428,11 @@ export default function DotTuyenSinh() {
                   <ChiTieuArrayFields submitChiTieu={handleSubmitChiTieu} existNganh={dataDotTuyenSinh.chi_tieu_tuyen_sinh.map(x => (x.maNganh))} />
                 </Row>
               </Col>
+              {danh_sach_trung_tuyen?.length > 0 &&
+                <Col span={10}>
+                  <DiemChuanDuKien maDotTuyenSinh={maDotTuyenSinh} onRefilter={() => setReload(!reload)} title={`Điểm chuẩn dự kiến đợt tuyển sinh ${dataDotTuyenSinh.tenDotTuyenSinh}`} chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
+                </Col>
+              }
             </Row>
             <Divider />
             <Row>
@@ -442,10 +461,11 @@ export default function DotTuyenSinh() {
                   label: `DANH SÁCH TRÚNG TUYỂN TUYỂN`,
                   key: '2',
                   children: <Spin spinning={loading_dsxt} > <Row>
-                    <Space style={{ padding: 5 }}>
-                      <Button type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_tt_columns, danh_sach_trung_tuyen, 'DSTrungTuyen')} >Tải về</Button>
-                    </Space>
 
+                    {danh_sach_trung_tuyen?.length > 0 ? <Space style={{ padding: 5 }}>
+                      <XacNhanNhapHoc maDotTuyenSinh={maDotTuyenSinh} />
+                      <Button style={{ textAlign: 'right' }} type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_tt_columns, danh_sach_trung_tuyen, 'DSTrungTuyen')} >Tải về Danh Sách Túng tuyển</Button>
+                    </Space> : <h3 style={{ color: 'red' }}>Chưa có danh sách trúng tuyển</h3>}
 
                     <AntTable
                       columns={ds_tt_columns}
@@ -477,7 +497,10 @@ export default function DotTuyenSinh() {
             <AntTable columns={dot_columns} rows={tuyenSinhState.list_dot_ts} loading={loading} />
           </Col>
         </Row> */}
-        {modalResultControl.open && <ModalDSXT tenDotTuyenSinh={dataDotTuyenSinh.tenDotTuyenSinh} onSaveDSXT={onSaveDSXT} {...modalResultControl} onCancel={() => { setModalResultControl(prev => ({ ...prev, open: false })) }} />}
+        {modalResultControl.open && <ModalDSXT tenDotTuyenSinh={dataDotTuyenSinh.tenDotTuyenSinh}
+          onSaveDSXT={onSaveDSXT} {...modalResultControl}
+          onSaveTuyenThang={onSaveTuyenThang}
+          onCancel={() => { setModalResultControl(prev => ({ ...prev, open: false })) }} />}
       </Spin>
     </div>
   );

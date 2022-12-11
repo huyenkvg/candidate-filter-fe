@@ -7,7 +7,10 @@ export default class ThongKeAPI {
     return axios({
       method: "GET",
       url: `http://localhost:3000/khoa-tuyen-sinh/thong-ke`,
-      params: data
+      params: data,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
     })
   }
 }

@@ -9,7 +9,8 @@ export default class CandidateAPI {
       url: `http://localhost:3000/wish-list/upfile`,
       headers: {
           'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          Authorization: `Bearer ` + localStorage.getItem('token'),
       },
       data: data
   })
@@ -22,7 +23,8 @@ export default class CandidateAPI {
       headers: {
         Authorization: "Bearer " + localStorage.getItem('token'),
         'Content-Type': 'multipart/form-data',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        
       },
       data: data
     })

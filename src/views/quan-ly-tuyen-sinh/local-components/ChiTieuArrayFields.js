@@ -252,6 +252,7 @@ const ChiTieuArrayFields = ({ submitChiTieu , existNganh}) => {
               </Space>
             ))}
             <Form.Item hidden={options.length == 0}>
+              <h4> hoặc </h4>
               <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                 Thêm Ngành Tuyển
               </Button>

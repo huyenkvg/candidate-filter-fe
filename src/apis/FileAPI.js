@@ -6,7 +6,28 @@ export default class FileAPI {
     return axios({
       method: "POST",
       url: `http://localhost:3000/file-handler/upload-chi-tieu${save ? ("?save=true" + "&maDotTuyenSinh=" + maDotTuyenSinh) : ""}`,
-      data: data
+      data: data,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
+    })
+  }
+  static GET_DSXT_DOT_TUYEN_SINH = (maDotTuyenSinh) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/dot-tuyen-sinh/dsxt/${maDotTuyenSinh}`,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
+    })
+  }
+  static GET_DSTT_DOT_TUYEN_SINH = (maDotTuyenSinh) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/dot-tuyen-sinh/dstt/${maDotTuyenSinh}`,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
     })
   }
 }

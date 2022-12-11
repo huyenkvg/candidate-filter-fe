@@ -6,18 +6,47 @@ export default class AuthAPI {
     return axios({
       method: "GET",
       url: `http://localhost:3000/users`,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
+
     })
   }
   static createAccount = (data) => {
-    return axios.post( `http://localhost:3000/users`,
+    return axios.post(`http://localhost:3000/users/create`,
       data,
       {
         headers: {
           "Content-Type": "application/json",
           "accept": 'application/json',
-          "Bearer": localStorage.getItem("token")
+          Authorization: `Bearer ` + localStorage.getItem('token'),
         },
       }
     )
   }
+  static updateAccount = (id, data) => {
+    return axios.patch(`http://localhost:3000/users/${id}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "accept": 'application/json',
+          Authorization: `Bearer ` + localStorage.getItem('token'),
+        },
+      }
+    )
+  }
+  static updateProfile = (id, data) => {
+    return axios.patch(`http://localhost:3000/users/update-profile/${id}`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "accept": 'application/json',
+          Authorization: `Bearer ` + localStorage.getItem('token'),
+        },
+      }
+    )
+  }
+
 }

@@ -9,7 +9,7 @@ import { logout } from "../../features/User/userSlice";
 
 export default function UserMenu() {
   const [visible, setVisible] = useState(false);
-  const [user, setUser] = useState({ username: localStorage.getItem("email") });
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('userInfo')));
   const navigate = useNavigate();
   const dispatch = useDispatch();
   // const history = unstable_HistoryRouter();

@@ -13,7 +13,166 @@ import Complextable from "../../../components/table/ComplexTable";
 import { FormTaoKhoa } from "../local-components/FormTaoKhoa";
 import SearchBar from "../local-components/SearchBar";
 import YearPicker from "../../../components/input/YearPicker";
+import FileAPI from "../../../apis/FileAPI";
+import { Excel } from "antd-table-saveas-excel";
 
+
+const ds_xettuyen_columns = [
+  {
+    title: 'stt',
+    dataIndex: 'stt',
+    key: 'stt',
+
+  },
+  {
+    title: 'Số báo danh',
+    dataIndex: 'soBaoDanh',
+    key: 'soBaoDanh',
+
+    width: 200,
+  },
+  {
+    title: 'Nguyện Vọng',
+    dataIndex: 'nguyenVong',
+    key: 'nguyenVong',
+    width: 10,
+  },
+  {
+    title: 'Mã Ngành',
+    dataIndex: 'maNganh',
+    key: 'maNganh',
+    width: 100,
+  },
+
+  {
+    title: 'Họ Tên',
+    dataIndex: 'hoTen',
+    key: 'hoTen',
+  },
+  {
+    title: 'Mã Tổ Hợp Xét Tuyển',
+    dataIndex: 'maToHopXetTuyen',
+    key: 'maToHopXetTuyen',
+    width: 200,
+
+  },
+  {
+    title: 'Tổng Điểm',
+    dataIndex: 'tongDiem',
+    key: 'tongDiem',
+
+    width: 100,
+  },
+  {
+    title: 'cmnd',
+    dataIndex: 'cmnd',
+    key: 'cmnd',
+    width: 100,
+  },
+  {
+    title: 'Địa Chỉ Nhận Giấy Báo',
+    dataIndex: 'diaChiNhanGiayBao',
+    key: 'diaChiNhanGiayBao',
+    width: 200,
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+
+    width: 150,
+  },
+  {
+    title: 'Giới Tính',
+    dataIndex: 'gioiTinh',
+    key: 'goiTinh',
+    width: 100,
+  },
+  {
+    title: 'Mã Tỉnh',
+    dataIndex: 'maTinh',
+    key: 'maTinh',
+    width: 150,
+  },
+  {
+    title: 'Mã Trường',
+    dataIndex: 'maTruong',
+    key: 'maTinh',
+    width: 150,
+  },
+  {
+    title: 'Khu Vực Ưu Tiên',
+    dataIndex: 'khuVucUuTien',
+    key: 'khuVucUuTien',
+    width: 200,
+  },
+]
+const ds_tt_columns = [
+  {
+    title: 'Số Báo Danh',
+    dataIndex: 'soBaoDanh',
+    key: 'soBaoDanh',
+    width: 100,
+
+  },
+  {
+    title: 'Mã Ngành',
+    dataIndex: 'maNganh',
+    key: 'maNganh',
+    width: 200,
+  },
+  {
+    title: 'Mã Tổ Hợp Xét Tuyển',
+    dataIndex: 'maToHopXetTuyen',
+    key: 'maToHopXetTuyen',
+    width: 200,
+  },
+  {
+    title: 'Nguyện Vọng Trúng Tuyển',
+    dataIndex: 'nguyenVongTrungTuyen',
+    key: 'nguyenVong',
+  },
+  {
+    title: 'Họ Tên',
+    dataIndex: 'hoTen',
+    key: 'hoTen',
+  },
+  {
+    title: 'cmnd',
+    dataIndex: 'cmnd',
+    key: 'cmnd',
+  },
+  {
+    title: 'Địa Chỉ Nhận Giấy Báo',
+    dataIndex: 'diaChiNhanGiayBao',
+    key: 'diaChiNhanGiayBao',
+  },
+  {
+    title: 'Email',
+    dataIndex: 'email',
+    key: 'email',
+  },
+  {
+    title: 'Giới Tính',
+    dataIndex: 'gioiTinh',
+    key: 'goiTinh',
+  },
+  {
+    title: 'Mã Tỉnh',
+    dataIndex: 'maTinh',
+    key: 'maTinh',
+  },
+  {
+    title: 'Mã Trường',
+    dataIndex: 'maTruong',
+    key: 'maTinh',
+  },
+  {
+    title: 'Khu Vực Ưu Tiên',
+    dataIndex: 'khuVucUuTien',
+    key: 'khuVucUuTien',
+  }
+]
 
 
 function showMessage(type, content) {
@@ -37,6 +196,7 @@ function showMessage(type, content) {
 
 export default function KhoaTuyenSinh() {
   // Khai báo
+  const [loadingDownload, setLoadingDownload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState({})
   const [dataTable, setDataTable] = useState([]);
@@ -62,11 +222,11 @@ export default function KhoaTuyenSinh() {
         key: 'action',
         render: (text, record) =>
           <Space>
-            <Button type="primary" ghost size='small' onClick={() => { handleClick(record, 'MINI-VIEW-XETTUYEN') }}
-              icon={<EyeOutlined />}
+            <Button disabled={loadingDownload?.type == 'DSXT-DOT'&& loadingDownload?.id == record.maDotTuyenSinh} type="primary" ghost size='small' onClick={() => { handleClick(record, 'MINI-VIEW-XETTUYEN') }}
+              icon={<DownloadOutlined />}
             >DS xét tuyển</Button>
-            <Button type="primary" ghost size='small' onClick={() => { handleClick(record, 'MINI-VIEW-TRUNGTUYEN') }}
-              icon={<EyeOutlined />}
+            <Button  disabled={loadingDownload?.type == 'DSTT-DOT'&& loadingDownload?.id == record.maDotTuyenSinh} type="primary" ghost size='small' onClick={() => { handleClick(record, 'MINI-VIEW-TRUNGTUYEN') }}
+              icon={<DownloadOutlined />}
             >DS trúng tuyển</Button>
             <Button type="primary" ghost size='small' onClick={() => { handleClick(record, 'MINI-EDIT-ROW') }}
               icon={<EditOutlined />}>Sửa Tên</Button>
@@ -116,7 +276,7 @@ export default function KhoaTuyenSinh() {
       render: (text, record) => (
         <Space>
           <Button type='primary' size='small' onClick={() => handleClick(record, 'VIEW-ROW')}
-            icon={<EyeOutlined />}
+            icon={<DownloadOutlined />}
           >DS trúng tuyển</Button>
           {/* <Button type="primary" shape="circle" size="small" icon={<DownloadOutlined />} onClick={() => handleClick(record, 'VIEW-ROW')} loading={loading} /> */}
           {/* <Button type='primary' size="small" onClick={() => handleClick(record, 'EDIT-ROW')} icon={<EditOutlined />}  >Sửa Tên</Button> */}
@@ -126,6 +286,48 @@ export default function KhoaTuyenSinh() {
     },
   ]
 
+  const [danh_sach_trung_tuyen, setDanh_sach_trung_tuyen] = useState([]);
+  const [danh_sach_nguyen_vong, setDanh_sach_nguyen_vong] = useState([]);
+  const onClickDownDSTT = (columns, dataSource, file_name) => {
+    showMessage('info','Đang xuất file excel' );
+    const excel = new Excel();
+    excel
+      .addSheet(file_name)
+      .addColumns(columns)
+      .addDataSource(dataSource, {
+        str2Percent: true
+      })
+      .saveAs(`${file_name}.xlsx`);
+  };
+  const dowloadFile = (type, id) => {
+    showMessage('info','Đang tiến hành tải dữ liệu...');
+    setLoadingDownload({ type, id });
+    switch (type) {
+      case 'DSXT-DOT':
+        TuyenSinhAPI.getDSXTDotTuyenSinh(id).then(res => {
+          setLoadingDownload(false)
+          console.log('res.data :>> ', res.data.length);
+          // setDanh_sach_nguyen_vong(res.data);
+          onClickDownDSTT(ds_xettuyen_columns, res.data.map((x, ind) => ({ ...x, stt: ind, key: ind })), 'DSNguyenVong')
+
+        }).finally(() => setLoadingDownload(false))
+
+        break;
+      case 'DSTT-DOT':
+        showMessage( 'info','Đang tiến hành tải dữ liệu, vui lòng đợi giây lát');
+        TuyenSinhAPI.getDSTTDotTuyenSinh(id).then(res => {
+          setLoadingDownload(false)
+          console.log('res.data :>> ', res.data);
+          // setDanh_sach_trung_tuyen(res.data);
+          onClickDownDSTT(ds_tt_columns, res.data, 'DSTrungTuyen');
+        }).finally(() => setLoadingDownload(false))
+        break;
+      case 'DSTT-KHOA':
+        setLoadingDownload(false)
+        break;
+      default:
+    }
+  }
 
   //Hàm xly Sự Kiện
   const handleClick = (record, type) => {
@@ -144,6 +346,7 @@ export default function KhoaTuyenSinh() {
         break;
       case 'VIEW-ROW':
         // console.log(record);
+        dowloadFile('DSTT-KHOA', record.maKhoa)
         break;
       case 'CREATE-MINI-ROW':
         showDialogModal('CREATE-DOTTUYENSINH', [dot_tuyen_sinh_columns[0]], `Thêm Đợt Tuyển Sinh Khoá ${record.tenKhoa}`, { maKhoaTuyenSinh: record.maKhoa });
@@ -159,8 +362,10 @@ export default function KhoaTuyenSinh() {
         break;
       case 'MINI-VIEW-XETTUYEN':
         // console.log(record);
+        dowloadFile('DSXT-DOT', record.maDotTuyenSinh)
         break;
       case 'MINI-VIEW-TRUNGTUYEN':
+        dowloadFile('DSTT-DOT', record.maDotTuyenSinh)
         
         // console.log(record);
         break;

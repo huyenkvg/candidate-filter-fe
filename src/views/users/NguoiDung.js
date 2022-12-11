@@ -42,41 +42,45 @@ export default function NguoiDung() {
     switch (type) {
       case 'CREATE-ACCOUNT':
         let payload = {
-          username: formValues.email,
-          password: 'ptit@@123456',
-          // email: formValues.email,
-          // phone: formValues.phone,
-          // firstname: formValues.firstname,
-          // lastname: formValues.lastname,
-          role_id: 1
+          user: {
+            username: formValues['email'],
+            password: 'PTIT@123',
+            role_id: 1
+          },
+          profile: {
+            firstname: formValues.firstname,
+            lastname: formValues.lastname,
+            phone: formValues.phone,
+          }
         }
-        AuthAPI.createAccount(formValues)
+        AuthAPI.createAccount(payload)
           .then((res) => {
             showMessage('success', 'Tạo Account thành công');
             // setDataModal({ ...dataModal, open: false });
             // setDataAccount(dataAccount.push(res.data));
             fetchData();
-            setLoading(false);
           }).catch((err) => {
-            setLoading(false);
-            
+            setLoading(false);            
             showMessage('error', 'Tạo Account thất bại');
           });
         break;
-      case 'EDIT-ACCOUNT':
-        let { maAccount, tenAccount } = formValues;
-        // TuyenSinhAPI.updateAccount({ maAccount, tenAccount })
-        //   .then((res) => {
-        //     showMessage('success', 'Cập nhật Account thành công');
-        //     setDataAccount(dataAccount.map((item) => {
-        //       if (item.maAccount == maAccount) {
-        //         return { ...item, tenAccount }
-        //       }
-        //       return item;
-        //     }))
-        //     setLoading(false);
-        //     setDataModal({ ...dataModal, open: false });
-        //   })
+      case 'EDIT-PROFILE':
+        setDataModal({ ...dataModal, open: false });
+        let { user_id, payloadUpdate } = formValues;
+        AuthAPI.updateProfile(user_id, formValues)
+          .then((res) => {
+            showMessage('success', 'Cập nhật Account thành công');
+            fetchData();
+            setDataAccount(dataAccount.map((item) => {
+              if (item.user_id == user_id) {
+                return { ...item, profile: payloadUpdate }
+              }
+              return item;
+            }))
+          }).catch((err) => {
+            setLoading(false);
+            showMessage('error', 'Cập nhật Account thất bại');
+          })
 
         break;
       case 'DELETE-ACCOUNT':
@@ -107,7 +111,17 @@ export default function NguoiDung() {
       case 'EDIT-ROW':
         // setDataModal({ ...dataModal, prevData: record })
         // console.log('record :>> ', record);
-        setDataModal({ open: true, typeSubmit: 'EDIT-ACCOUNT', prevData: record, title: 'Sửa Account', schema: columns.slice(1, 2) });
+        setDataModal({
+          open: true, typeSubmit: 'EDIT-PROFILE', prevData: record.profile, title: 'Sửa Account', schema: formschema.slice(1).concat({
+            title: 'trạng thái',
+            dataIndex: 'active',
+            type: 'select',
+            options: [
+              { value: 'active', label: 'active' },
+              { value: 'inactive', label: 'inactive' },
+            ]
+          })
+        });
         // console.log(record, type);
         break;
       case 'DELETE-ROW':
@@ -121,16 +135,16 @@ export default function NguoiDung() {
   }
   const formschema = [
     {
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
       title: 'Tên',
       dataIndex: 'firstname',
     },
     {
       title: 'Họ',
       dataIndex: 'lastname',
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
     },{
       title: 'Số Điện thoại',
       dataIndex: 'phone',
@@ -206,6 +220,7 @@ export default function NguoiDung() {
   ]
 
   const fetchData = () => {
+    setLoading(true);
     AuthAPI.getDanhSachAccount().then((res) => {
       setDataAccount(res.data);
       setLoading(false);
@@ -216,13 +231,7 @@ export default function NguoiDung() {
   }
 
   useEffect(() => {
-    AuthAPI.getDanhSachAccount().then((res) => {
-      setDataAccount(res.data);
-      setLoading(false);
-    }).catch((err) => {
-      console.log(err);
-      setLoading(false);
-    })
+    fetchData();
 
   }, []);
   return (
