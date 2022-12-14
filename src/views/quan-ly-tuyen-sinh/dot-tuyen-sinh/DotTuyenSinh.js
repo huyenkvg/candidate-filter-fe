@@ -414,7 +414,7 @@ export default function DotTuyenSinh() {
         <Row>
           {!loading && dataDotTuyenSinh && <Col span={24}>
             <Row>
-              <Col span={14}>
+              <Col span={8}>
                 <h3>Thông tin đợt tuyển sinh {dataDotTuyenSinh.tenDotTuyenSinh}</h3>
                 {/* <p>Tổng nguyện vọng: {dataDotTuyenSinh._count.danh_sach_trung_tuyen}</p>
                 <p>Tổng trúng tuyển: {dataDotTuyenSinh._count.danh_sach_nguyen_vong}></p> */}
@@ -429,7 +429,7 @@ export default function DotTuyenSinh() {
                 </Row>
               </Col>
               {danh_sach_trung_tuyen?.length > 0 &&
-                <Col span={10}>
+                <Col span={16}>
                   <DiemChuanDuKien maDotTuyenSinh={maDotTuyenSinh} onRefilter={() => setReload(!reload)} title={`Điểm chuẩn dự kiến đợt tuyển sinh ${dataDotTuyenSinh.tenDotTuyenSinh}`} chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
                 </Col>
               }
