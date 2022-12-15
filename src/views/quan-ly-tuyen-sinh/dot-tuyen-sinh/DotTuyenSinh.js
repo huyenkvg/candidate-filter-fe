@@ -16,6 +16,7 @@ import UploadChiTieuTuyenSinh from "./UploadChiTieuTuyenSinh";
 import { Excel } from "antd-table-saveas-excel";
 import XacNhanNhapHoc from "./XacNhanNhapHoc";
 import DiemChuanDuKien from "./DiemChuanDuKien";
+import FileAPI from "../../../apis/FileAPI";
 
 function showMessage(type, content) {
   switch (type) {
@@ -443,18 +444,21 @@ export default function DotTuyenSinh() {
                   label: `DANH SÁCH XÉT TUYỂN`,
                   key: '1',
                   children: <Spin spinning={loading_dsxt}> <Row>
-                    <p>File Excel cần có Sheet tên "Mini" chứa dữ liệu cần trích xuất. Các Header của cột phải nằm ở hàng trên cùng. Các cột <span style={{ color: 'red' }}>Số Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng, Mã Tổ Hợp Xét Tuyển</span> là bắt buộc</p>
-                    <p>Có Thể <Button type='link' icon={< DownloadOutlined />}>Tải Template</Button> để điền thông tin sau đó nộp</p>
+                    <Col span={24}><p>File Excel cần có Sheet tên "Mini" chứa dữ liệu cần trích xuất. Các Header của cột phải nằm ở hàng trên cùng. Các cột <span style={{ color: 'red' }}>Số Báo Danh, Mã Ngành, Tổng Điểm, Nguyện Vọng, Mã Tổ Hợp Xét Tuyển</span> là bắt buộc</p>
+                    <p>Có Thể <Button onClick={()=> FileAPI.getExcelFileOf('nguyen-vong-mau')} type='link' icon={< DownloadOutlined />}>Tải Template</Button>để điền thông tin sau đó nộp</p>
+                    </Col>
 
                     <Space style={{ padding: 5 }}>
                       <UploadButton onUpload={upFileHandler} />
                       <Button type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_xettuyen_columns, danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind })), 'DSNguyenVong')} >Tải về File DSXT</Button>
                     </Space>
-                    {danh_sach_nguyen_vong.length > 0 && <AntTable
+                    <Col span={24}>
+                      {danh_sach_nguyen_vong.length > 0 && <AntTable
                       columns={ds_xettuyen_columns}
                       rows={danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind }))}
                     // rowKey="stt"
-                    />}
+                      />}</Col>
+
                   </Row></Spin>
                 },
                 {

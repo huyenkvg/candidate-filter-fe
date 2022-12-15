@@ -278,6 +278,9 @@ export default function KhoaTuyenSinh() {
           <Button type='primary' size='small' onClick={() => handleClick(record, 'VIEW-ROW')}
             icon={<DownloadOutlined />}
           >DS trúng tuyển</Button>
+          <Button type='primary' size='small' onClick={() => handleClick(record, 'VIEW-ROW-NGUYENVONG')}
+            icon={<DownloadOutlined />}
+          >DS Nguyện Vọng</Button>
           {/* <Button type="primary" shape="circle" size="small" icon={<DownloadOutlined />} onClick={() => handleClick(record, 'VIEW-ROW')} loading={loading} /> */}
           {/* <Button type='primary' size="small" onClick={() => handleClick(record, 'EDIT-ROW')} icon={<EditOutlined />}  >Sửa Tên</Button> */}
           <Button danger type='primary' size="small" onClick={() => handleClick(record, 'DELETE-ROW')} icon={<DeleteOutlined />}>Xóa</Button>
@@ -346,7 +349,17 @@ export default function KhoaTuyenSinh() {
         break;
       case 'VIEW-ROW':
         // console.log(record);
-        dowloadFile('DSTT-KHOA', record.maKhoa)
+        // FileAPI.getExcelFileOf('nguyen-vong-mau')
+        FileAPI.getExcelFileOf('DSTT-KHOA', record.maKhoa)
+
+        // dowloadFile('DSTT-KHOA', record.maKhoa)
+        break;
+      case 'VIEW-ROW-NGUYENVONG':
+        // console.log(record);
+        // FileAPI.getExcelFileOf('nguyen-vong-mau')
+        FileAPI.getExcelFileOf('DSNV-KHOA', record.maKhoa)
+
+        // dowloadFile('DSTT-KHOA', record.maKhoa)
         break;
       case 'CREATE-MINI-ROW':
         showDialogModal('CREATE-DOTTUYENSINH', [dot_tuyen_sinh_columns[0]], `Thêm Đợt Tuyển Sinh Khoá ${record.tenKhoa}`, { maKhoaTuyenSinh: record.maKhoa });
