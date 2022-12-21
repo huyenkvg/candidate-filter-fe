@@ -7,6 +7,8 @@ import AntTable from "../../components/table/AntTable";
 import { DownloadOutlined, EyeOutlined, FilterOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import Chart from "./Chart";
+import ThongKeAPI from "../../apis/ThongKeAPI";
+import { Excel } from "antd-table-saveas-excel";
 function showMessage(type, content) {
   switch (type) {
     case 'success':
@@ -41,28 +43,530 @@ export default function ThongKe() {
   const columns = [
     {
       title: 'Khoá tuyển sinh',
-      dataIndex: 'khoa_tuyen_sinh',
+      dataIndex: 'tenKhoa',
+      key: 'tenKhoa',
+      width: 170,
+
 
     }, {
       title: 'Số lượng Đợt tuyển sinh',
-      dataIndex: 'so_luong_dot_tuyen_sinh',
-    }, {
+      dataIndex: 'count_dot_tuyen_sinh',
+      key: 'count_dot_tuyen_sinh',
+      width: 170,
+    },
+    {
       title: 'Số lượng ngành',
-      dataIndex: 'so_luong_nganh',
+      dataIndex: 'count_nganh',
+      key: 'count_nganh',
+      width: 170,
+      // render: (text, record) => {
+      //   return <p>{text.count_nganh}</p>
+      // }
 
     },
     {
-      title: 'Số lượng thí sinh',
-      dataIndex: 'so_luong_thi_sinh',
+      title: 'Số lượng nguyện vọng',
+      dataIndex: 'count_nguyen_vong',
+      key: 'count_nguyen_vong',
+      width: 170,
     },
     {
       title: 'Số lượng thí sinh trúng tuyển',
-      dataIndex: 'so_luong_thi_sinh_dat',
-    }
+      dataIndex: 'count_trung_tuyen',
+      key: 'count_trung_tuyen',
+      width: 170,
+    },
+    {
+      title: 'Số lượng sinh viên nhập học',
+      dataIndex: 'count_nhap_hoc',
+      key: 'count_nhap_hoc',
+      width: 170,
+    },
+    {
+      title: 'Tỉ lệ trúng tuyển',
+      dataIndex: 'tile_trung_tuyen',
+      key: 'tile_trung_tuyen',
+      width: 170,
+    },
+    {
+      title: 'Tỉ lệ nhập học',
+      dataIndex: 'tile_nhap_hoc',
+      key: 'tile_nhap_hoc',
+      width: 170,
+    },
   ]
   const onGetData = (data) => {
-    setData(data);
+    // console.log('data huyen kute :>> ', data);
+    // setData(data);
   }
+  useEffect(() => {
+    ThongKeAPI.getTableThongKe(filterOption).then((res) => {
+      setData(res.data.map(x => ({
+        ...x,
+        key: x.id,
+        tile_trung_tuyen: `${(x.count_trung_tuyen / x.count_nguyen_vong * 100).toFixed(2)}%`,
+        tile_nhap_hoc: `${(x.count_nhap_hoc / x.count_trung_tuyen * 100).toFixed(2)}%`,
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      })));
+      // console.log('HUHUHUHUHUHUUUH :>> ', res.data);
+    })
+  }, [filterOption])
+
+
+  const onClickDown = (columns, dataSource) => {
+
+    const excel = new Excel();
+    excel
+      .addSheet("Mini")
+      .addColumns(columns)
+      .addDataSource(dataSource, {
+        str2Percent: true
+      })
+      .saveAs(`ThongKe-${filterOption.khoa_start}-${filterOption.khoa_end}.xlsx`);
+  };
+
   return (
     <div>
       <Row>
@@ -107,13 +611,13 @@ export default function ThongKe() {
       <Row>
         <Space style={{margin:2}}>
 
-          <Button type="primary" icon={<DownloadOutlined />} onClick={() => { }}>DownLoad</Button>
+          <Button type="primary" icon={<DownloadOutlined />} onClick={() => { onClickDown(columns, data) }}>DownLoad</Button>
         </Space>
 
-        <AntTable
+        {data.length > 0 && <AntTable
           columns={columns}
           rows={data}
-        />
+        />}
 
       </Row>
     </div>

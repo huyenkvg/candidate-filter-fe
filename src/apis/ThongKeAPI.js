@@ -13,4 +13,14 @@ export default class ThongKeAPI {
       },
     })
   }
+  static getTableThongKe = (data) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/khoa-tuyen-sinh/thong-ke-data-table`,
+      params: data,
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
+    })
+  }
 }

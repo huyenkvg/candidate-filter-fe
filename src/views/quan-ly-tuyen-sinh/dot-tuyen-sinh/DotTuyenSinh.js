@@ -395,7 +395,7 @@ export default function DotTuyenSinh() {
   const onClickDownDSTT = (columns, dataSource, file_name) => {
     const excel = new Excel();
     excel
-      .addSheet("test")
+      .addSheet("Mini")
       .addColumns(columns)
       .addDataSource(dataSource, {
         str2Percent: true
