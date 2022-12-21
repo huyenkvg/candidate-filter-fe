@@ -47,6 +47,9 @@ export default class FileAPI {
       case `DSNV-KHOA`: // KHO chứa
         url = `http://127.0.0.1:3000/file-handler/report-dsnv-khoa/` + khoa;
         break;
+      case `DS-HO-SO`: //
+        url = `http://127.0.0.1:3000/file-handler/report-ds-hoso-khoa/` + khoa;
+        break;
       default:
     }
     return await axios({

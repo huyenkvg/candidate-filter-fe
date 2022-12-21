@@ -6,6 +6,7 @@ export default class AuthAPI {
     return axios({
       method: "GET",
       url: `http://localhost:3000/users`,
+      params: data,
       headers: {
         Authorization: `Bearer ` + localStorage.getItem('token'),
       },

@@ -3,8 +3,16 @@ import { Config } from "../config";
 
 export default class TuyenSinhAPI {
 
-  static getDanhSachKhoaTuyenSinh = (nameOnly) => {
-    return axios.get(`http://localhost:3000/khoa-tuyen-sinh${nameOnly ? '?nameOnly=true' : ''}`);
+  static getDanhSachKhoaTuyenSinh = (nameOnly, payload) => {
+    return axios({
+      method: "GET",
+      url: `http://localhost:3000/khoa-tuyen-sinh${nameOnly ? '?nameOnly=true' : ''}`,
+      params: { ...payload },
+      headers: {
+        Authorization: `Bearer ` + localStorage.getItem('token'),
+      },
+    })
+
   }
   static DIEMCHUAN_DUKIEN = (maDotTuyenSinh) => {
     return axios({
@@ -126,6 +134,7 @@ export default class TuyenSinhAPI {
     return axios({
       method: "GET",
       url: `http://localhost:3000/nganh`,
+      params: { ...data},
       headers: {
         Authorization: `Bearer ` + localStorage.getItem('token'),
       },
@@ -165,6 +174,7 @@ export default class TuyenSinhAPI {
     return axios({
       method: "GET",
       url: `http://localhost:3000/to-hop-xet-tuyen`,
+      params: { ...data},
       headers: {
         Authorization: `Bearer ` + localStorage.getItem('token'),
       },

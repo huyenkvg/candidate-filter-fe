@@ -33,7 +33,8 @@ function showMessage(type, content) {
 export default function Nganh() {
 
   const [loading, setLoading] = useState(true);
-  const [dataNganh, setDataNganh] = useState(null);
+  const [dataNganh, setDataNganh] = useState(null);  
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });
@@ -140,15 +141,19 @@ export default function Nganh() {
     }
   ]
   const fetchData = () => {
-    TuyenSinhAPI.getNganh().then((res) => {
+
+    setLoading(true);
+    TuyenSinhAPI.getNganh(filter).then((res) => {
       setDataNganh(res.data);
+      setLoading(false);
     }).finally(() => {
       setLoading(false);
     })
   }
 
   useEffect(() => {
-    TuyenSinhAPI.getDanhSachNganh().then((res) => {
+    setLoading(true);
+    TuyenSinhAPI.getDanhSachNganh(filter).then((res) => {
       setDataNganh(res.data);
       setLoading(false);
     }).catch((err) => {
@@ -156,7 +161,7 @@ export default function Nganh() {
       setLoading(false);
     })
 
-  }, []);
+  }, [filter]);
   return (
 
     <div style={{ overflowX: 'scroll' }}>
@@ -164,10 +169,10 @@ export default function Nganh() {
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
             <Button onClick={() => showDialogModal('CREATE-NGANH', columns.slice(0,2), "Thêm Ngành")} > Thêm Ngành</Button>
-            <SearchBar onSearching={e=>{}} label="Tìm Kiếm Ngành" />
+            <SearchBar onSearching={e => { setFilter({ ...filter, search: e }) }} label="Tìm Kiếm Ngành" />
           </Space>
         </Row>
-        {dataNganh &&
+        {dataNganh && loading == false &&
           <Row>
             <Col span={24}>
               <AntTable columns={columns} rows={dataNganh} loading={loading} />

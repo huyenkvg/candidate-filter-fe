@@ -34,6 +34,7 @@ export default function ToHopXetTuyen() {
 
   const [loading, setLoading] = useState(true);
   const [dataToHopXetTuyen, setDataToHopXetTuyen] = useState(null);
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });
@@ -150,7 +151,8 @@ export default function ToHopXetTuyen() {
     }
   ]
   const fetchData = () => {
-    TuyenSinhAPI.getDanhSachToHopXetTuyen().then((res) => {
+    setLoading(true);
+    TuyenSinhAPI.getDanhSachToHopXetTuyen(filter).then((res) => {
       setDataToHopXetTuyen(res.data);
     }).finally(() => {
       setLoading(false);
@@ -158,7 +160,8 @@ export default function ToHopXetTuyen() {
   }
 
   useEffect(() => {
-    TuyenSinhAPI.getDanhSachToHopXetTuyen().then((res) => {
+    setLoading(true);
+    TuyenSinhAPI.getDanhSachToHopXetTuyen(filter).then((res) => {
       setDataToHopXetTuyen(res.data);
       setLoading(false);
     }).catch((err) => {
@@ -166,7 +169,7 @@ export default function ToHopXetTuyen() {
       setLoading(false);
     })
 
-  }, []);
+  }, [filter]);
   return (
 
     <div style={{ overflowX: 'scroll' }}>
@@ -174,10 +177,10 @@ export default function ToHopXetTuyen() {
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
             <Button onClick={() => showDialogModal('CREATE-TO-HOP', columns.slice(0,4), "Thêm Tổ Hợp")} > Thêm Tổ Hợp</Button>
-            <SearchBar onSearching={e=>{}} label="Tìm Kiếm Tổ Hợp" />
+            <SearchBar onSearching={e=>{setFilter({...filter, search:e})}} label="Tìm Kiếm Tổ Hợp" />
           </Space>
         </Row>
-        {dataToHopXetTuyen &&
+        {dataToHopXetTuyen && loading == false &&
           <Row>
             <Col span={24}>
               <AntTable columns={columns} rows={dataToHopXetTuyen} loading={loading} />

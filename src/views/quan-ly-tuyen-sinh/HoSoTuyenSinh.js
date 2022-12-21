@@ -8,6 +8,7 @@ import AntTable from "../../components/table/AntTable";
 import { FormTaoKhoa } from "../quan-ly-tuyen-sinh/local-components/FormTaoKhoa";
 import AuthAPI from "../../apis/AuthAPI";
 import TuyenSinhAPI from "../../apis/TuyenSinhAPI";
+import FileAPI from "../../apis/FileAPI";
 
 function showMessage(type, content) {
   switch (type) {
@@ -243,15 +244,19 @@ export default function HoSoTuyenSinh() {
               style={{ width: '200px'}}
               options={dataKhoa}
             />
-            {params.maKhoaTuyenSinh !== 'all' && <Button type="default" danger icon={<DeleteOutlined />} onClick={() => {
+            {params.maKhoaTuyenSinh !== 'all' && <> <Button type="default" danger icon={<DeleteOutlined />} onClick={() => {
               setOpenConfirm({
                 open: true,
                 record: { maKhoaTuyenSinh: params.maKhoaTuyenSinh },
-                title: `Loại Bỏ các hồ sơ không có nguyện vọng nào của khoá ${params.maKhoaTuyenSinh}`,
+                title: `Loại Bỏ các hồ sơ không có nguyện vọng nào của khoá ${dataKhoa.find((item) => item.value == params.maKhoaTuyenSinh).label}`,
                 typeSubmit: 'DELETE-ALL-HO-SO',
 
               })
-            }} > Clear Hồ Sơ Rác</Button>}
+            }} > Clear Hồ Sơ Rác</Button> 
+            <Button type="primary" icon={<DownloadOutlined />} onClick={() => {
+              FileAPI.getExcelFileOf('DS-HO-SO', params.maKhoaTuyenSinh)
+            }} > Xuất Excel</Button></>}
+
             <Button onClick={() => showDialogModal('CREATE-HO-SO', columns.slice(0, 7), "Thêm HoSo")} > Thêm HoSo</Button>
             <SearchBar label="Tìm Kiếm Thí Sinh" onSearching={onSearching}/>
            

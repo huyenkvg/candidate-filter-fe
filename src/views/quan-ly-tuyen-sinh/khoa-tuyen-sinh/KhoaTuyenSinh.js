@@ -199,6 +199,8 @@ export default function KhoaTuyenSinh() {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState({})
+  
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
   const [dataTable, setDataTable] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -512,7 +514,7 @@ export default function KhoaTuyenSinh() {
 
   useEffect(() => {
     // Lấy danh sách tất cả các khoá
-    TuyenSinhAPI.getDanhSachKhoaTuyenSinh().then(
+    TuyenSinhAPI.getDanhSachKhoaTuyenSinh(false, filter).then(
       (res) => {
         dispatch(setDanhSachKhoaTuyenSinh(res.data));
         showMessage('success', 'Lấy danh sách khoá tuyển sinh thành công');
@@ -522,7 +524,7 @@ export default function KhoaTuyenSinh() {
     }).finally(() => {
       setLoading(false);
     });
-  }, []);
+  }, [filter]);
 
   useEffect(() => {
     setDataTable(tuyenSinhState.list_khoa_ts);
@@ -539,7 +541,7 @@ export default function KhoaTuyenSinh() {
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
             <Button onClick={() => showDialogModal('CREATE-KHOATUYENSINH', [khoa_columns[0]], "Thêm Khoá Tuyển Sinh")} >Thêm Khoá Tuyển Sinh</Button>
-            <SearchBar onSearching={e => { }} label="Tìm Kiếm Khoá Tuyển Sinh" />
+            <SearchBar onSearching={e=>{setFilter({...filter, search:e})}} label="Tìm Kiếm Bằng Tên Đợt Tuyển Sinh" />
           </Space>
         </Row>
         <Row>

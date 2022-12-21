@@ -32,6 +32,7 @@ export default function NguoiDung() {
 
   const [loading, setLoading] = useState(true);
   const [dataAccount, setDataAccount] = useState(null);
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });
@@ -221,7 +222,7 @@ export default function NguoiDung() {
 
   const fetchData = () => {
     setLoading(true);
-    AuthAPI.getDanhSachAccount().then((res) => {
+    AuthAPI.getDanhSachAccount(filter).then((res) => {
       setDataAccount(res.data);
       setLoading(false);
     }).catch((err) => {
@@ -233,7 +234,7 @@ export default function NguoiDung() {
   useEffect(() => {
     fetchData();
 
-  }, []);
+  }, [filter]);
   return (
 
     <div style={{ overflowX: 'scroll' }}>
@@ -241,7 +242,7 @@ export default function NguoiDung() {
         <Row style={{ justifyContent: 'right', marginBottom: '10px' }}>
           <Space>
             <Button onClick={() => showDialogModal('CREATE-ACCOUNT', formschema, "Thêm Account")} > Thêm Account</Button>
-            <SearchBar onSearching={e=>{}} label="Tìm Kiếm Account" />
+            <SearchBar onSearching={e=>{setFilter({...filter, search:e})}} label="Tìm Kiếm Account" />
           </Space>
         </Row>
         {dataAccount && !loading &&
