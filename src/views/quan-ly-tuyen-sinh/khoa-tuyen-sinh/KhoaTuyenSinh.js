@@ -199,8 +199,8 @@ export default function KhoaTuyenSinh() {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [loading, setLoading] = useState(true);
   const [formValues, setFormValues] = useState({})
-  
-  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
+  const role = JSON.parse(localStorage.getItem('userInfo')).role;
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 100 });
   const [dataTable, setDataTable] = useState([]);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -385,6 +385,10 @@ export default function KhoaTuyenSinh() {
         // console.log(record);
         break;
       case 'LOCK-DOT-TUYENSINH':
+        if (role.name != "ADMIN") {
+          showMessage('error', 'Bạn không có quyền thực hiện thao tác này');
+          return;
+        }
         let { danh_sach_trung_tuyen, ...x } = record;
         handleSubmit({ ...x, lock: !x.lock }, 'EDIT-DOTTUYENSINH')
       default:

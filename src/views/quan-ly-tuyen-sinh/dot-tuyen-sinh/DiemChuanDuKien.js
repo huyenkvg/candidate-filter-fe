@@ -21,7 +21,7 @@ function showMessage(type, content) {
       break;
   }
 }
-export default function DiemChuanDuKien({ maDotTuyenSinh, title, chi_tieu_tuyen_sinh, onRefilter, ...props }) {
+export default function DiemChuanDuKien({ maDotTuyenSinh, title, chi_tieu_tuyen_sinh, onRefilter, lock, ...props }) {
   const [loading, setLoading] = useState(false);
   const [ds_diem_chuan, setDs_diem_chuan] = useState(null);
   const [ds_diem_chuan_to_hop, setDs_diem_chuan_to_hop] = useState(null);
@@ -140,7 +140,7 @@ return (<Card
   {is_tuyen_thang ?
     <h4 style={{ color: '#185adb' }}>Đây là đợt tuyển thẳng nên các ngành đều không có điểm chuẩn</h4>
     : <Space>
-      <Button icon={alowChange ? <MinusOutlined /> : <PlusOutlined />} onClick={() => setAlowChange(!alowChange)}>{alowChange ? 'Ẩn Thay đổi' : 'Mở thay đổi'}</Button>
+      <Button disabled={lock} icon={alowChange ? <MinusOutlined /> : <PlusOutlined />} onClick={() => setAlowChange(!alowChange)}>{alowChange ? 'Ẩn Thay đổi' : 'Mở thay đổi'}</Button>
       {alowChange && <Button type="primary" icon={<SaveOutlined />} onClick={onClickSaveNewDiemChuan}>Lưu Danh Sách Điểm Chuẩn Mới</Button>}
     </Space>}
   <Spin spinning={loading}>

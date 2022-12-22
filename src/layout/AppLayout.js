@@ -20,6 +20,19 @@ function getItem(label, key, icon, children) {
   };
 }
 const items = [
+  // getItem('Người Dùng', 'nguoi-dung', <TeamOutlined />),
+  getItem('Thống Kê', 'thong-ke', <TeamOutlined />),
+  getItem('Tool Lọc', 'loc-trung-tuyen', <UserOutlined />),
+  ,
+  getItem('Tuyển Sinh', 'tuyen-sinh', <UserOutlined />, [
+    getItem('Khoá Tuyển Sinh', 'khoa-tuyen-sinh', <UserOutlined />),
+    getItem('Hồ Sơ Tuyển Sinh', 'ho-so-tuyen-sinh', <UserOutlined />),
+    getItem('Ngành', 'nganh', <UserOutlined />),
+    getItem('Tổ Hợp', 'to-hop', <UserOutlined />),
+    // getItem('Khoá Tuyển Sinh', 'nganh', <UserOutlined />),
+  ]),
+];
+const admin_items = [
   getItem('Người Dùng', 'nguoi-dung', <TeamOutlined />),
   getItem('Thống Kê', 'thong-ke', <TeamOutlined />),
   getItem('Tool Lọc', 'loc-trung-tuyen', <UserOutlined />),
@@ -39,6 +52,7 @@ const hide_path = [
 const AppLayout = (props) => {
   const [collapsed, setCollapsed] = useState(false);
   const user = useSelector(state => state.userSlice);
+  const role = JSON.parse(localStorage.getItem('userInfo'))?.role;
   const navigate = useNavigate()
   const location = useLocation();
   const dispatch = useDispatch();
@@ -81,7 +95,7 @@ const AppLayout = (props) => {
             />
 
           </div>
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} onClick={e => handleClick(e, 'CLICK-MENU')} />
+        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={role?.name == "ADMIN" ? admin_items :items} onClick={e => handleClick(e, 'CLICK-MENU')} />
       </Sider>
       <Layout className="site-layout">
         <Header
@@ -154,7 +168,7 @@ const AppLayout = (props) => {
     </Layout>
       :
       <>
-        {props.children}</>
+        {props.children }</>
 
   );
 };

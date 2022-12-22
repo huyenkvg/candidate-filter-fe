@@ -32,7 +32,7 @@ export default function NguoiDung() {
 
   const [loading, setLoading] = useState(true);
   const [dataAccount, setDataAccount] = useState(null);
-  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 100 });
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });
@@ -46,7 +46,7 @@ export default function NguoiDung() {
           user: {
             username: formValues['email'],
             password: 'PTIT@123',
-            role_id: 1
+            role_id: formValues['role_id'],
           },
           profile: {
             firstname: formValues.firstname,
@@ -67,8 +67,8 @@ export default function NguoiDung() {
         break;
       case 'EDIT-PROFILE':
         setDataModal({ ...dataModal, open: false });
-        let { user_id, payloadUpdate } = formValues;
-        AuthAPI.updateProfile(user_id, formValues)
+        let { user_id, payloadUpdate, active } = formValues;
+        AuthAPI.updateProfile(user_id, { ...formValues, active: active == 'active' ? true : false })
           .then((res) => {
             showMessage('success', 'Cập nhật Account thành công');
             fetchData();
@@ -150,7 +150,15 @@ export default function NguoiDung() {
       title: 'Số Điện thoại',
       dataIndex: 'phone',
     },
-
+    {
+      title: 'Quyền',
+      dataIndex: 'role_id',
+      type: 'select',
+      options: [
+        { value: 1, label: 'ADMIN' },
+        { value: 2, label: 'USER' },
+      ]
+    }
 
   ]
 
@@ -201,8 +209,9 @@ export default function NguoiDung() {
       title: 'Trạng thái tài khoản',
       dataIndex: 'active',
       key: 'active',
-      render: active => {
-        return <p style={{color: active? 'green': 'orange'}}>{active ? 'Đang hoạt động' : 'Đã khóa'}</p>
+      render: (text, record) => {
+        console.log('record :>> ', record);
+        return <p style={{ color: text ? 'green' : 'orange' }}>{text ? 'Đang hoạt động' : 'Đã khóa'}</p>
       }
     },
     {

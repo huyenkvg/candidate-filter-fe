@@ -3,7 +3,25 @@ import { Button, message, Upload } from 'antd';
 import React from 'react';
 
 
-export default function UploadButton({ onUpload }) {
+function showMessage(type, content) {
+  switch (type) {
+    case 'success':
+      message.success(content);
+      break;
+    case 'error':
+      message.error(content);
+      break;
+    case 'warning':
+      message.warning(content);
+      break;
+    case 'info':
+      message.info(content);
+      break;
+    default:
+      break;
+  }
+}
+export default function UploadButton({ onUpload, disabled }) {
   const [file_x, setFile] = React.useState(null);
   // const props = {
   //   beforeUpload: (file) => {
@@ -31,6 +49,7 @@ export default function UploadButton({ onUpload }) {
   //   </Upload>
   // )
   const handleUploadFile = (e) => {
+  
     console.log("upfileee", e.target.files[0]);
 
     let formData = new FormData();
@@ -49,12 +68,20 @@ export default function UploadButton({ onUpload }) {
       {/* <UploadOutlined/>  */}
       {/* <input type='file' id="getFile" style="display:none"> */}
       <Button type='text'>
-      <input
+      <input 
+      // disabled= {disabled}
              ref={fileInput}
               type="file"
               value={file_x}
               // style={{ display: 'none' }}
               onChange={handleUploadFile}
+              onClick={(e) => { 
+                if(disabled){
+                  // alert("Hệ thống hiện không cho phép thao tác này")
+                  showMessage("error", "Hệ thống hiện không cho phép thao tác này")
+                  e.preventDefault();
+                }
+               }}
             /></Button>
     </div>
   )

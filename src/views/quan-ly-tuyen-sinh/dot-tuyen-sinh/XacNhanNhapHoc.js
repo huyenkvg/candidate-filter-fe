@@ -23,7 +23,7 @@ function showMessage(type, content) {
   }
 }
 
-export default function XacNhanNhapHoc({ maDotTuyenSinh }) {
+export default function XacNhanNhapHoc({ maDotTuyenSinh , lock}) {
 
   const [fileInput, setFileInput] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -81,7 +81,7 @@ export default function XacNhanNhapHoc({ maDotTuyenSinh }) {
 
     <Space style={{ alignContent: 'center' }}>
       <h3>Upload danh sách xác nhận nhập học</h3>
-      <UploadButton onUpload={upFileHandler} />
+      <UploadButton onUpload={upFileHandler} disabled={lock} />
       {model.open && <Modal
         key='w'
         centered

@@ -34,7 +34,7 @@ export default function Nganh() {
 
   const [loading, setLoading] = useState(true);
   const [dataNganh, setDataNganh] = useState(null);  
-  const [filter, setFilter] = useState({ search: '', page: 1, limit: 10 });
+  const [filter, setFilter] = useState({ search: '', page: 1, limit: 100 });
   const [dataModal, setDataModal] = useState({ open: false, typeSubmit: null, prevData: {}, title: '', schema: null });
   const showDialogModal = (typeSubmit, schema, title, prevData) => {
     setDataModal({ ...dataModal, open: true, typeSubmit: typeSubmit, title: title, schema: schema, prevData: prevData });

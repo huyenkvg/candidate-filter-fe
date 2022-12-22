@@ -21,7 +21,7 @@ function App() {
   const user = useSelector(state => state.userSlice);
   const dispatch = useDispatch(); 
 
-  const privateRoutes = [
+  const privateRoutes =JSON.parse(localStorage.getItem('userInfo'))?.role.name == "ADMIN"  ? [
         { path: '/', element:  <TuyenSinh /> },
         { path: '/thong-ke', element:  <ThongKe/> },
         { path: '/loc-trung-tuyen', element: <TuyenSinh /> },
@@ -30,6 +30,18 @@ function App() {
         { path: '/nganh', element: <Nganh /> },
         { path: '/to-hop', element: <ToHopXetTuyen/> },
         { path: '/dot-tuyen-sinh/:maDotTuyenSinh', element: <DotTuyenSinh /> },
+        { path: '/ho-so-tuyen-sinh', element: <HoSoTuyenSinh/> },
+        { path: '/home', element: <Home /> },
+  ]
+  : [
+        { path: '/', element:  <TuyenSinh /> },
+        { path: '/thong-ke', element:  <ThongKe/> },
+        { path: '/loc-trung-tuyen', element: <TuyenSinh /> },
+        { path: '/khoa-tuyen-sinh', element: <KhoaTuyenSinh /> },
+        // { path: '/nguoi-dung', element: <NguoiDung /> },
+        { path: '/nganh', element: <Nganh /> },
+        { path: '/to-hop', element: <ToHopXetTuyen/> },
+        { path: '/dot-tuyen-sinh/:maDotTuyenSinh', element: <DotTuyenSinh  /> },
         { path: '/ho-so-tuyen-sinh', element: <HoSoTuyenSinh/> },
         { path: '/home', element: <Home /> },
   ]

@@ -123,10 +123,10 @@ const ChiTieuArrayFields = ({ submitChiTieu , existNganh}) => {
   const [finalValue, setFinalValue] = React.useState({});
 
   useEffect(() => {
-    TuyenSinhAPI.getDanhSachToHopXetTuyen().then((res) => {
+    TuyenSinhAPI.getDanhSachToHopXetTuyen({ search: '', page: 1, limit: 100 }).then((res) => {
       setDsToHop(res.data);
     })
-    TuyenSinhAPI.getDanhSachNganh().then((res) => {
+    TuyenSinhAPI.getDanhSachNganh({ search: '', page: 1, limit: 100 }).then((res) => {
       let arr = res.data.filter(x => !existNganh.includes(x.maNganh));
       setNganh(arr.reduce((acc, cur) => {
         acc[cur.maNganh] = cur.tenNganh;

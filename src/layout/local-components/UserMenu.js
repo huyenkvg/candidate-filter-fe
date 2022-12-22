@@ -18,7 +18,7 @@ export default function UserMenu() {
     // setUser(user);
   }, []);
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
+    localStorage.clear();
     dispatch(logout())
     navigate('/login');
   };

@@ -71,7 +71,7 @@ function LineChartDiem(props) {
 function NganhPieChart(props) {
   return (
     <>
-      <h4 style={{ textAlign: 'center' }}>Tỷ lệ tuyển các ngành</h4>
+      <h4 style={{ textAlign: 'center' }}>Chỉ tiêu tuyển các ngành</h4>
       <PieChart width={600} height={350}> 
 
         <Pie

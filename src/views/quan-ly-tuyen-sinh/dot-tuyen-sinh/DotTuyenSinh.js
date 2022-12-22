@@ -249,6 +249,7 @@ export default function DotTuyenSinh() {
   const [reload, setReload] = useState(false);
   const [loading_dsxt, setLoading_dsxt] = useState(true);
   const [dataDotTuyenSinh, setDataDotTuyenSinh] = useState(null);
+  const [lock, setLock] = useState(true);
   const [danh_sach_trung_tuyen, setDanh_sach_trung_tuyen] = useState([]);
   const [danh_sach_nguyen_vong, setDanh_sach_nguyen_vong] = useState([]);
   const [fileInput, setFileInput] = useState(null);
@@ -305,6 +306,8 @@ export default function DotTuyenSinh() {
       })
       TuyenSinhAPI.getThongTinDotTuyenSinh(maDotTuyenSinh).then(
         (res) => {
+          if (res.data.lock != true)
+            setLock(false);
           console.log('res.data :>> ', res.data.danh_sach_trung_tuyen);
           setDataDotTuyenSinh({
             ...dataDotTuyenSinh,
@@ -423,7 +426,7 @@ export default function DotTuyenSinh() {
                 {dataDotTuyenSinh._count.chi_tieu_tuyen_sinh > 0
                   && <RenderChiTieu chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
                 } 
-                <UploadChiTieuTuyenSinh onOk={onOkUploadChiTieu} maDotTuyenSinh={maDotTuyenSinh} />
+                <UploadChiTieuTuyenSinh onOk={onOkUploadChiTieu} maDotTuyenSinh={maDotTuyenSinh}  lock = {lock}/>
                 
                 <Row>
                   <ChiTieuArrayFields submitChiTieu={handleSubmitChiTieu} existNganh={dataDotTuyenSinh.chi_tieu_tuyen_sinh.map(x => (x.maNganh))} />
@@ -431,7 +434,7 @@ export default function DotTuyenSinh() {
               </Col>
               {danh_sach_trung_tuyen?.length > 0 &&
                 <Col span={16}>
-                  <DiemChuanDuKien maDotTuyenSinh={maDotTuyenSinh} onRefilter={() => setReload(!reload)} title={`Điểm chuẩn dự kiến đợt tuyển sinh ${dataDotTuyenSinh.tenDotTuyenSinh}`} chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
+                  <DiemChuanDuKien lock={lock} maDotTuyenSinh={maDotTuyenSinh} onRefilter={() => setReload(!reload)} title={`Điểm chuẩn dự kiến đợt tuyển sinh ${dataDotTuyenSinh.tenDotTuyenSinh}`} chi_tieu_tuyen_sinh={dataDotTuyenSinh.chi_tieu_tuyen_sinh} />
                 </Col>
               }
             </Row>
@@ -449,7 +452,7 @@ export default function DotTuyenSinh() {
                     </Col>
 
                     <Space style={{ padding: 5 }}>
-                      <UploadButton onUpload={upFileHandler} />
+                      <UploadButton onUpload={upFileHandler}  disabled={lock}/>
                       <Button type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_xettuyen_columns, danh_sach_nguyen_vong.map((x, ind) => ({ ...x, stt: ind, key: ind })), 'DSNguyenVong')} >Tải về File DSXT</Button>
                     </Space>
                     <Col span={24}>
@@ -467,7 +470,7 @@ export default function DotTuyenSinh() {
                   children: <Spin spinning={loading_dsxt} > <Row>
 
                     {danh_sach_trung_tuyen?.length > 0 ? <Space style={{ padding: 5 }}>
-                      <XacNhanNhapHoc maDotTuyenSinh={maDotTuyenSinh} />
+                      <XacNhanNhapHoc maDotTuyenSinh={maDotTuyenSinh} lock={lock}/>
                       <Button style={{ textAlign: 'right' }} type='primary' icon={< DownloadOutlined />} onClick={() => onClickDownDSTT(ds_tt_columns, danh_sach_trung_tuyen, 'DSTrungTuyen')} >Tải về Danh Sách Túng tuyển</Button>
                     </Space> : <h3 style={{ color: 'red' }}>Chưa có danh sách trúng tuyển</h3>}
 

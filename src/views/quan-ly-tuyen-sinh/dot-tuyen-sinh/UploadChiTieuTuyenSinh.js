@@ -33,7 +33,7 @@ function showMessage(type, content) {
       break;
   }
 }
-export default function UploadChiTieuTuyenSinh({ onOk, maDotTuyenSinh }) {
+export default function UploadChiTieuTuyenSinh({ onOk, maDotTuyenSinh, lock }) {
 
   const [loading, setLoading] = useState(true);
   const [file, setFile] = useState(null);
@@ -119,7 +119,7 @@ export default function UploadChiTieuTuyenSinh({ onOk, maDotTuyenSinh }) {
   return (
     <Space style={{ }}>
       <h4>Tải lên danh sách chỉ tiêu của ngành</h4>
-      <UploadButton onUpload={upFileHandler} />
+      <UploadButton onUpload={upFileHandler} disabled={lock}/>
       <Modal
 
         width={800}

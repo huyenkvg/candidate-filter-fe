@@ -44,6 +44,24 @@ export function FormTaoKhoa({schema, onSubmit, prevValues, onCancel, onOk}) {
               </Form.Item>
             )
           }
+          if (item.type == 'select') {
+            return (
+              <Form.Item key={index} name={item.dataIndex} label={item.title} rules={[{ required: true }]}>
+                <Select
+                  placeholder={`Chọn ${item.title}`} 
+                  allowClear
+                >
+                  {
+                    item.options.map((option, index) => {
+                      return (
+                        <Option key={index} value={option.value}>{option.label}</Option>
+                      )
+                    })
+                  }
+                </Select>
+              </Form.Item>
+            )
+          }
           return (
             <Form.Item key={index} name={item.dataIndex} label={item.title}  rules={[{ required: true }]}>
               <Input   type={item.type || 'text'} />
