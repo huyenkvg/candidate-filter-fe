@@ -24,6 +24,7 @@ function showMessage(type, content) {
 export default function DiemChuanDuKien({ maDotTuyenSinh, title, chi_tieu_tuyen_sinh, onRefilter, lock, ...props }) {
   const [loading, setLoading] = useState(false);
   const [ds_diem_chuan, setDs_diem_chuan] = useState(null);
+  const [ds_sl_trung_tuyen, setDs_sl_trung_tuyen] = useState({});
   const [ds_diem_chuan_to_hop, setDs_diem_chuan_to_hop] = useState(null);
   const [is_tuyen_thang, setIs_tuyen_thang] = useState(true);
   const [newDiemChuan, setNewDiemChuan] = useState({});
@@ -51,12 +52,18 @@ const fetchData = () => {
   setLoading(true);
   // setIs_tuyen_thang(true);
   TuyenSinhAPI.DIEMCHUAN_DUKIEN(maDotTuyenSinh).then(res => {
+
+    setDs_sl_trung_tuyen(res.data.reduce((ret, cur) => {
+      ret[cur.maNganh] = cur['so_luong_trung_tuyen'];
+      return ret;
+    }, {}))
     setDs_diem_chuan(res.data.reduce((ret, cur) => {
       if (typeof (cur['diemChuan']) == 'number') {
         ret[cur.maNganh] = {}
         chi_tieu_tuyen_sinh.forEach(item => {
           if (item.maNganh == cur.maNganh) {
             item.chi_tieu_to_hop?.forEach(tohop => {
+              ret[cur.maNganh]['gioi_han_nguyen_vong'] = cur['gioi_han_nguyen_vong'] ||'INF';
               ret[cur.maNganh][tohop.maToHop] = cur['diemChuan'];
             })
           }
@@ -65,13 +72,20 @@ const fetchData = () => {
       }
       else {
         try {
+          
           ret[cur.maNganh] = {};
-          const dc = JSON.parse(cur['diemChuan'])
+          const dc = JSON.parse(cur['diemChuan'])          
           ret[cur.maNganh] = { ...dc, gioi_han_nguyen_vong: (dc.gioi_han_nguyen_vong || 'INF')}
         }
         catch (err) {
           console.log('err :>> ', err);
           ret[cur.maNganh] = Number.parseFloat(cur['diemChuan']);
+          // ret[cur.maNganh] = {...chi_tieu_tuyen_sinh.find(item => item.maNganh == cur.maNganh).chi_tieu_to_hop.reduce((r, c) => {
+          //   console.log('c :>> ', c);
+          //   r[c.maToHop] = Number.parseFloat(cur['diemChuan']);
+          //   return r;
+          // }, {}), gioi_han_nguyen_vong: 'INF'}
+
         }
 
       }
@@ -89,6 +103,7 @@ const fetchData = () => {
 }
   const onClickSaveNewDiemChuan = (maNganh, value) => {
     console.log('newDiemChuan :>> ', newDiemChuan);
+    console.log('ds_diem_chuan[] :>> ', ds_diem_chuan);
     let valid = true;
 
       showMessage('info', `Những điểm chuẩn để trống sẽ được giữ nguyên điểm cũ`)
@@ -101,11 +116,10 @@ const fetchData = () => {
 
       item.chi_tieu_to_hop.map(tohop => {
         if (!newDiemChuan[item.maNganh]['gioi_han_nguyen_vong'] || newDiemChuan[item.maNganh]['gioi_han_nguyen_vong'] == '' || newDiemChuan[item.maNganh]['gioi_han_nguyen_vong'] < 0) {
-          newDiemChuan[item.maNganh].gioi_han_nguyen_vong = 'INF';
+          newDiemChuan[item.maNganh].gioi_han_nguyen_vong = ds_diem_chuan[item.maNganh]?.gioi_han_nguyen_vong || 'INF';
         }
         if (!newDiemChuan[item.maNganh][tohop.maToHop] || newDiemChuan[item.maNganh][tohop.maToHop]) {
           if (newDiemChuan[item.maNganh] && !newDiemChuan[item.maNganh][tohop.maToHop]) {
-            console.log('ds_diem_chuan[] :>> ', ds_diem_chuan[item.maNganh][tohop.maToHop]);
             newDiemChuan[item.maNganh][tohop.maToHop] = ds_diem_chuan[item.maNganh][tohop.maToHop];
             // valid = false;
             // showMessage('info', `Vui lòng nhập đủ điểm chuẩn tất cả các tổ hợp cho ngành ${item.maNganh} `)
@@ -163,7 +177,8 @@ return (<Card
         return (<>
           <Row key={index}>
             <Col span={10}>
-              <p> {item.maNganh} - {item.nganh?.tenNganh}</p>
+              <p style={{color:'#185adb', fontWeight:'bold', fontSize:'14px'}}> {item.maNganh} - {item.nganh?.tenNganh} </p>
+              <p style={{color:'red'}}> Số lượng trúng tuyển:  {ds_sl_trung_tuyen[item.maNganh] || 0}</p>
             
               {!ds_diem_chuan[item.maNganh] ? (is_tuyen_thang ? '--Không có điểm chuẩn--' : '--Chưa có--') :
                 (Object.keys(ds_diem_chuan[item.maNganh]).map(x => (
@@ -192,7 +207,7 @@ return (<Card
                 onChange={(e) => {
                   setNewDiemChuan(prev => ({
                     ...newDiemChuan,
-                    [item.maNganh]: { ...prev[item.maNganh], ['gioi_han_nguyen_vong']: e.target.value }
+                    [item.maNganh]: { ...prev[item.maNganh], ['gioi_han_nguyen_vong']: Number.parseInt(e.target.value) }
                   }))
                 }}
 
@@ -207,7 +222,7 @@ return (<Card
                   onChange={(e) => {
                     setNewDiemChuan(prev => ({
                       ...newDiemChuan,
-                      [item.maNganh]: { ...prev[item.maNganh], [toHop.maToHop]: e.target.value }
+                      [item.maNganh]: { ...prev[item.maNganh], [toHop.maToHop]: Number.parseFloat(e.target.value) }
                     }))
                   }}
 

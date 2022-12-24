@@ -32,8 +32,9 @@ export default class FileAPI {
   }
 
   //================================================== FILE - TẢI - XUẤT ========================================================
-  static getExcelFileOf = async (categoryStr, khoa) => {
+  static getExcelFileOf = async (categoryStr, khoa, name) => {
     let url = ``;
+    let ex_name = (name || khoa || '') + new Date().toISOString().slice(0, 10);
     switch (categoryStr) {
       case `nguyen-vong-mau`: // TÀi SẢN
         url = `http://127.0.0.1:3000/file-handler/nguyen-vong-mau`;
@@ -60,7 +61,7 @@ export default class FileAPI {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement(`a`);
       link.href = url;
-      link.setAttribute(`download`, `${categoryStr}_EXPORT.xlsx`); //or any other extension
+      link.setAttribute(`download`, `${categoryStr}_${ex_name}_EXPORT.xlsx`); //or any other extension
       document.body.appendChild(link);
       link.click();
     });

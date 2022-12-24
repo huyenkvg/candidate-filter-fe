@@ -224,7 +224,7 @@ function RenderChiTieu({ chi_tieu_tuyen_sinh }) {
 
       <p>Chỉ Tiêu:</p>
       {chi_tieu_tuyen_sinh.map((item, index) => (<>
-        <p style={{ color: 'orange' }} key={index}>{item.maNganh}  : {item.chiTieu} (Thí sinh)</p>
+        <p style={{ color: '#185adb', fontSize:'14px', fontWeight:'bold', }} key={index}>{item.maNganh} - {item.nganh.tenNganh}  : {item.chiTieu} (Thí sinh)</p>
         {
           freeNganh[item.maNganh] == true ? <>
             <Space>

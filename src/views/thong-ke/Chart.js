@@ -40,7 +40,7 @@ function LineChartDiem(props) {
     if (!acc) { 
       acc={};
       acc[tenNganh] = diemChuan;
-      acc['name'] = tenKhoa+"-"+ tenDotTuyenSinh;
+      acc['name'] = tenKhoa+"-"+ tenDotTuyenSinh;      
       resp.push(acc);
     }
     else {
